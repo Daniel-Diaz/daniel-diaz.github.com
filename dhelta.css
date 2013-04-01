@@ -1,0 +1,40 @@
+body { margin: 0px 10% ;
+       background-color: #000000 ; }
+
+p { color: #FFFFFF ;
+    text-align: justify ; }
+
+p.long { text-indent: 50px ; }
+
+p.right { text-align: right ; }
+
+p.code { font-family: courier ; }
+
+a { color: #FFFFFF }
+
+a:link { text-decoration: none ;
+         color: #9999FF ; }
+
+a:link:hover { color: #CCCCFF ; }
+
+h1 { color: #FFFFFF ;
+     font-family: georgia ;
+     margin-top: 5px ; }
+
+h2 { color: #FFFFFF ;
+     font-family: georgia ;
+     margin-top: 5px ; }
+
+hr { border-top: 1px dashed #FFFFFF ;
+     border-bottom: 0px solid #000000 ; }
+
+table { padding: 2px ;
+        border-spacing: 10px ; }
+
+td { vertical-align: top ; }
+
+table.dashed { border: 1px dashed #FFFFFF ; }
+
+li:before { content: "\261B" ;
+            padding-right: 5px ;
+            color: #FFFFFF ; }
