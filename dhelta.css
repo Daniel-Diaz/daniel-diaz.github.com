@@ -31,12 +31,17 @@ hr { border-top: 1px dashed #FFFFFF ;
      border-bottom: 0px solid #000000 ; }
 
 table { padding: 2px ;
-        border-spacing: 10px ; }
+        border-spacing: 10px ;
+        margin-bottom: 5px ; }
 
 td { vertical-align: top ; }
 
 table.dashed { border: 1px dashed #FFFFFF ; }
 
+ul { list-style: none ; }
+
 li:before { content: "\261B" ;
             padding-right: 5px ;
             color: #FFFFFF ; }
+
+li.trex:before { content: url(http://qwantz.com/forum/images/smiles/trex-omg.gif) ; }
