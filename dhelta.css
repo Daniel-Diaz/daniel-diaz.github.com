@@ -14,10 +14,12 @@ p.code { font-family: courier ; }
 a { color: #FFFFFF ;
     font-family: georgia ; }
 
-a:link { text-decoration: none ;
+a:link, a:active , a:visited
+       { text-decoration: none ;
          color: #9999FF ; }
 
-a:link:hover { color: #CCCCFF ; }
+a:link:hover , a:active:hover , a:visited:hover
+      { color: #CCCCFF ; }
 
 h1 { color: #FFFFFF ;
      font-family: georgia ;
@@ -42,6 +44,6 @@ ul { list-style: none ; }
 
 li:before { content: "\261B" ;
             padding-right: 5px ;
-            color: #FFFFFF ; }
+            color: #FFFF00 ; }
 
 li.trex:before { content: url(http://qwantz.com/forum/images/smiles/trex-omg.gif) ; }
