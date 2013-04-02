@@ -36,9 +36,9 @@ table { padding: 2px ;
         border-spacing: 10px ;
         margin-bottom: 5px ; }
 
-td { vertical-align: top ; }
-
 table.dashed { border: 1px dashed #FFFFFF ; }
+
+td { vertical-align: top ; }
 
 ul { list-style: none ; }
 
