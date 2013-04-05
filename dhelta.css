@@ -22,11 +22,15 @@ a:link, a:active , a:visited
 a:link:hover , a:active:hover , a:visited:hover
       { color: #CCCCFF ; }
 
-h1 { color: #FFFFFF ;
+h1 { color: #EEEEFF ;
      font-family: georgia ;
      margin-top: 5px ; }
 
-h2 { color: #FFFFFF ;
+h2 { color: #EEEEFF ;
+     font-family: georgia ;
+     margin-top: 5px ; }
+
+h3 { color: #EEEEFF ;
      font-family: georgia ;
      margin-top: 5px ; }
 
