@@ -1,0 +1,27 @@
+[ 
+   { "firstName"     : "Daniel"
+   , "lastName"      : "Díaz"
+   , "age"           :  24
+   , "favoritePizza" : "cheese"
+     }
+,  { "firstName"     : "Foo"
+   , "lastName"      : "Bar"
+   , "age"           :  32
+   , "favoritePizza" : "pepperoni"
+     }
+,  { "firstName"     : "Victoria"
+   , "lastName"      : "Haskell"
+   , "age"           :  23
+   , "favoritePizza" : "cheese"
+     }
+,  { "firstName"     : "Amalie"
+   , "lastName"      : "Baumann"
+   , "age"           :  28
+   , "favoritePizza" : "ham"
+     }
+,  { "firstName"     : "Rachel"
+   , "lastName"      : "Scott"
+   , "age"           :  23
+   , "favoritePizza" : "ham"
+     }
+]
