@@ -3366,7 +3366,8 @@ void draw() {
       fill(255, 255, 0, 255) ;
       ellipse(450.5, 399.5, 6.8, 6.8) ;
       } 
-   text("Use Arrow keys to move.", 0.0, -17.0, 500.0, 200.0) ;
+   text("Use Arrow keys to move. Yellow dots will make ghosts not follow you for a few seconds.",
+        0.0, -17.0, 500.0, 200.0) ;
    if(v_64) {
       v_1[348] = 0 ;
       v_1[351] = 0 ;
