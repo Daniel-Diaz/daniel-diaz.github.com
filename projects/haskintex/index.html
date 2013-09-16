@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html><head><link rel="stylesheet" href="https://rawgithub.com/Daniel-Diaz/hatex-guide/master/hatex.css"></head>
+<body>
+<h1 class="title">Hask<i>in</i>TeX</h1>
+<p class="centered"><i>A program to evaluate Haskell code within LaTeX</i></p>
+<p class="centered">Daniel Díaz</p>
+<h1>The <i>haskintex</i> program</h1>
+
+<p>
+The <i>haskintex</i> program is a tool that reads a LaTeX file and evaluaes Haskell expressions contained
+in some specific commands and environments. It allows you to define your own functions, use any GHC Haskell language
+extension and, in brief, anything you can do within Haskell. You can freely add any Haskell code you need, and make
+this code appear <i>optionally</i> in the LaTeX output. It is a tiny program, and therefore, easy to understand, use and
+predict.
+</p>
+
+<h1>How does it work?</h1>
+
+<p>
+Consider the following simple example.
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+I have \evalhaskell{2+3} fingers in my right hand.
+\end{document}
+</pre>
+
+<p>
+If the above LaTeX code is written in <code>foo.tex</code>, after running <code>haskintex foo.tex</code>
+the file <code>haskintex_foo.tex</code> will be written with:
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+I have \verb`5` fingers in my right hand.
+\end{document}
+</pre>
+
+<p>
+The Haskell code <code>2+3</code> has been evaluated to <code>5</code>, and the result has been enclosed
+in a <code>verb</code> command.
+</p>
+
+<p>
+Let's go through another example. The factorial function can be implemented recursively in Haskell.
+</p>
+
+<pre>
+fact :: Int -> Int
+fact 0 = 1
+fact n = n * fact (n-1)
+</pre>
+
+Now we want to include this function in our LaTeX file, and call it where needed.
+This would be done like this:
+
+<pre>
+\documentclass{article}
+\begin{document}
+\begin{writehaskell}
+fact :: Int -> Int
+fact 0 = 1
+fact n = n * fact (n-1)
+\end{writehaskell}
+While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
+\evalhaskell{fact 10}.
+\end{document}
+</pre>
+
+<p>
+Therefore, when we want to add binding definitions we use the <code>writehaskell</code> environment,
+and if we want to evaluate code we use <code>evalhaskell</code>. If the output of an evaluation is
+known to be big and it is not desired to be inlined, use <code>evalhaskell</code> as an environment
+instead. For example:
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+This is the list of numbers from 1 to 1000:
+\begin{evalhaskell}
+[1..1000]
+\end{evalhaskell}
+\end{document}
+</pre>
+
+<p>
+Lines in the output of <code>evalhaskell</code> as <i>environment</i> are bounded to 60.
+A line break will be introduced if this maximum length of line is exceeded.
+</p>
+
+<h1>Code ordering</h1>
+
+<p>
+The place where you call <code>evalhaskell</code> does not really matter.
+We could have call to the <code>fact</code> function before define it.
+This will work as well:
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
+\evalhaskell{fact 10}.
+\begin{writehaskell}
+fact :: Int -> Int
+fact 0 = 1
+fact n = n * fact (n-1)
+\end{writehaskell}
+\end{document}
+</pre>
+
+What <i>haskintex</i> does is to traverse the LaTeX code twice. The first time it creates a module
+with all the code defined with <code>writehaskell</code> environments. In the second pass, it evaluates
+all the <code>evalhaskell</code> calls importing this module. Note that this means you have to avoid
+duplicated names.
+
+<h1>Visibility</h1>
+
+<p>
+By default, the Haskell code introduced by <code>writehaskell</code> will not show up in
+the processed LaTeX code. If you want to change this, use the <code>visible</code> option.
+For example:
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+\begin{writehaskell}[visible]
+fact :: Int -> Int
+fact 0 = 1
+fact n = n * fact (n-1)
+\end{writehaskell}
+While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
+\evalhaskell{fact 10}.
+\end{document}
+</pre>
+
+<p>
+A <code>verbatim</code> environment will contain the code. If you want to change the default
+behavior and make Haskell code visible by default, pass the <code>-visible</code> flag when
+invoking <code>haskintex</code>. Use then the <code>hidden</code> option to hide specific
+calls to <code>writehaskell</code>.
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+\begin{writehaskell}[hidden]
+fact :: Int -> Int
+fact 0 = 1
+fact n = n * fact (n-1)
+\end{writehaskell}
+While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
+\evalhaskell{fact 10}.
+\end{document}
+</pre>
+
+<h1>Flag reference</h1>
+
+<p>
+Below a list of the flags accepted by the program. Any argument starting with <code>-</code>
+will be recognized as a flag, even if it is not defined (in which case, it will do nothing).
+Anything else will be considered an input file.
+</p>
+
+<ul>
+<li><code>-keep</code>: Do not remove the auxiliary module after the program ends.</li>
+<li><code>-visible</code>: Make Haskell code in <code>writehaskell</code> environments visible by default.</li>
+<li><code>-verbose</code>: While working, print information on the screen about the execution.</li>
+</ul>
+</body>
