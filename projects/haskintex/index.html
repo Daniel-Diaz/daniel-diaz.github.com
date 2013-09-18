@@ -81,8 +81,8 @@ While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
 </pre>
 
 <p>
-Therefore, when we want to add binding definitions we use the <code>writehaskell</code> environment,
-and if we want to evaluate code we use <code>evalhaskell</code>. If the output of an evaluation is
+Therefore, to add binding definitions use the <code>writehaskell</code> environment,
+and to evaluate code use <code>evalhaskell</code>. If the output of an evaluation is
 known to be big and it is not desired to be inlined, use <code>evalhaskell</code> as an environment
 instead. For example:
 </p>
@@ -98,8 +98,8 @@ This is the list of numbers from 1 to 1000:
 </pre>
 
 <p>
-Lines in the output of <code>evalhaskell</code> as <i>environment</i> are bounded to 60.
-A line break will be introduced if this maximum length of line is exceeded.
+Lines in the output of <code>evalhaskell</code> as <i>environment</i> are bounded to 60
+characters. A line break will be introduced if this number is exceeded.
 </p>
 
 <h1>Code ordering</h1>
