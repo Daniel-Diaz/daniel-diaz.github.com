@@ -46,13 +46,13 @@ I have \verb`5` fingers in my right hand.
 <p>
 The Haskell code <code>2+3</code> has been evaluated to <code>5</code>, and the result has been enclosed
 in a <code>verb</code> command. The evaluation is done using
-<a href="http://www.haskell.org/ghc">GHC</a>, so you must have it installed.
+<a href="http://www.haskell.org/ghc">GHC</a>, so it must be installed in order to use <code>haskintex</code>.
 </p>
 
 <p>
-We could have processed the <code>foo.tex</code> file running <code>hakintex foo</code>. When the given
+The file <code>foo.tex</code> can be processes running <code>hakintex foo</code> as well. When the given
 input file does not exist, <i>haskintex</i> adds the <code>.tex</code> extension automatically.
-If the file with the added extension does not exist, <i>haskintex</i> throws an error.
+If the file with the added extension does not exist, it throws an error.
 </p>
 
 <p>
@@ -65,8 +65,8 @@ fact 0 = 1
 fact n = n * fact (n-1)
 </pre>
 
-Now we want to include this function in our LaTeX file, and call it where needed.
-This would be done like this:
+To include this function in the scope of <code>evalhaskell</code> use <code>writehaskell</code> as
+shown below.
 
 <pre>
 \documentclass{article}
@@ -106,9 +106,8 @@ characters. A line break will be introduced if this number is exceeded.
 <h1>Code ordering</h1>
 
 <p>
-The place where you call <code>evalhaskell</code> does not really matter.
-We could have called to the <code>fact</code> function before defining it.
-This will work as well:
+The place where <code>evalhaskell</code> is called does not really matter.
+The function <code>fact</code> can be called <i>before</i> defining it.
 </p>
 
 <pre>
@@ -126,14 +125,14 @@ fact n = n * fact (n-1)
 
 What <i>haskintex</i> does is to traverse the LaTeX code twice. The first time it creates a module
 with all the code defined with <code>writehaskell</code> environments. In the second pass, it evaluates
-all the <code>evalhaskell</code> calls importing this module. Note that this means you have to avoid
+all the <code>evalhaskell</code> calls with the created module imported. Note that this means you have to avoid
 duplicated names.
 
 <h1>Visibility</h1>
 
 <p>
 By default, the Haskell code introduced by <code>writehaskell</code> will not show up in
-the processed LaTeX code. If you want to change this, use the <code>visible</code> option.
+the processed LaTeX code. To change this, use the <code>visible</code> option.
 For example:
 </p>
 
@@ -151,7 +150,7 @@ While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
 </pre>
 
 <p>
-A <code>verbatim</code> environment will contain the code. If you want to change the default
+A <code>verbatim</code> environment will contain the code. To change the default
 behavior and make Haskell code visible by default, pass the <code>-visible</code> flag when
 invoking <code>haskintex</code>. Use then the <code>hidden</code> option to hide specific
 calls to <code>writehaskell</code>.
