@@ -1,0 +1,36 @@
+<h1 id="hatex-readme">HaTeX ReadMe</h1>
+<p>HaTeX is a Haskell library that implements the <em>LaTeX syntax</em>.</p>
+<p>Check a list of examples of usage in the <a href="Examples/">examples</a> directory. A good starting point may be <a href="Examples/simple.hs">simple.hs</a>. Run the script using the <code>main</code> function.</p>
+<h2 id="installation-notes">Installation notes</h2>
+<p>To install <code>HaTeX</code>, use <a href="http://hackage.haskell.org/package/cabal-install">cabal-install</a>.</p>
+<pre><code>$ cabal update
+$ cabal install HaTeX</code></pre>
+<p>This will install the latest official release (recommended). If you want to try a newer version, use <em>git</em> to clone the code contained in this repository.</p>
+<pre><code>$ git clone git@github.com:Daniel-Diaz/HaTeX.git
+$ cd HaTeX
+$ cabal install</code></pre>
+<p>However, note that the API may be unstable and is subject to any kind of change. In the other hand, this package follows the <a href="http://www.haskell.org/haskellwiki/Package_versioning_policy"><em>Package Versioning Policy</em></a>, so it is unlikely to suffer from API breakages if you follow it too when importing the library.</p>
+<h2 id="travis-automatic-build">Travis automatic build</h2>
+<p><a href="https://travis-ci.org/Daniel-Diaz/HaTeX"><embed src="https://travis-ci.org/Daniel-Diaz/HaTeX.png?branch=master" /></a></p>
+<h2 id="hatex-users-guide">HaTeX User's Guide</h2>
+<p>The HaTeX User's Guide lives <a href="https://github.com/Daniel-Diaz/hatex-guide">here</a>... and is also done in Haskell! It is free source and anybody can contribute to it. Doing so, you will help current and future users!</p>
+<p>A downloadable version (not necessarily the last version, but most likely) can be found <a href="http://daniel-diaz.github.com/projects/hatex/hatex-guide.pdf">here</a>. To be sure that you are reading the last version, go to the github repository of the guide and follow instructions to build it. It is fairly easy.</p>
+<h2 id="contributing">Contributing</h2>
+<p>To contribute to HaTeX, please, visit our code repository in GitHub:</p>
+<p>https://github.com/Daniel-Diaz/HaTeX</p>
+<h2 id="todo-list">TODO list</h2>
+<ul>
+<li>Add more examples.</li>
+<li>More testing on the parser (See <a href="https://github.com/Daniel-Diaz/HaTeX/issues/15">#15</a>).</li>
+<li>Add more documentation.</li>
+<li>BibTeX support.</li>
+</ul>
+<h2 id="packages-to-be-implemented">Packages to be implemented</h2>
+<ul>
+<li>geometry</li>
+</ul>
+<h2 id="related-projects">Related projects</h2>
+<ul>
+<li><a href="https://github.com/leftaroundabout/Symbolic-math-HaTeX">TeX-my-math</a>: Experimental library to ease the production of mathematical expressions using HaTeX.</li>
+<li><a href="https://github.com/Daniel-Diaz/haskintex">haskintex</a>: Tool to use Haskell and in particular the HaTeX library within a LaTeX file.</li>
+</ul>
