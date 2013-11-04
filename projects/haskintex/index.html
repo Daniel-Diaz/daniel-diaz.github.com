@@ -50,8 +50,8 @@ I have \evalhaskell{2+3} fingers in my right hand.
 </pre>
 
 <p>
-If the above LaTeX code is written in <code>foo.tex</code>, after running <code>haskintex foo.tex</code>
-the file <code>haskintex_foo.tex</code> will be written with:
+If the above LaTeX code is written in <code>foo.htex</code>, after running <code>haskintex foo.htex</code>
+the file <code>foo.tex</code> will be written with:
 </p>
 
 <pre>
@@ -249,7 +249,7 @@ While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
 Below a list of the flags accepted by the program. Any argument starting with <code>-</code>
 will be recognized as a flag, even if it is not defined (in which case, it will have no effect).
 Anything else will be considered an input file. For instance, this is a valid invocation to
-process the file <code>foo.tex</code> verbosely: <code>haskintex foo -verbose</code>.
+process the file <code>foo.htex</code> verbosely: <code>haskintex foo -verbose</code>.
 </p>
 
 <ul>
