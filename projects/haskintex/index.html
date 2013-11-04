@@ -246,24 +246,39 @@ Anything else will be considered an input file. For instance, this is a valid in
 process the file <code>foo.tex</code> verbosely: <code>haskintex foo -verbose</code>.
 </p>
 
-<ul><li>
-<code>help</code>: Show the version of the program and some information, like usage and
+<ul>
+<li><code>help</code>: Show the version of the program and some information, like usage and
 a description of the different flags.
 </li>
+
 <li><code>keep</code>: Do not remove the auxiliary module after the program ends.
 The name of the auxiliary module is the name of the input file preceded by <code>Haskintex_</code>.
 </li>
+
 <li><code>lhs2tex</code>: By default, <i>haskintex</i> uses basic LaTeX <code>verb</code>
 and <code>verbatim</code> declarations for Haskell code. When this flag is enabled, the output
-will be formatted for <a href="http://www.andres-loeh.de/lhs2tex">lhs2TeX</a>.</li>
+will be formatted for <a href="http://www.andres-loeh.de/lhs2tex">lhs2TeX</a>.
+</li>
+
 <li><code>manual</code>: This flag will make <i>haskintex</i> write <code>evalhaskell</code>
 and <code>writehaskell</code> outputs unchanged. In other words, no <code>verb</code>,
 <code>verbatim</code>, or <code>code</code> (in case the lhs2tex flag is enabled) declarations
-will be used.</li>
+will be used.
+</li>
+
+<li><code>overwrite</code>: Overwrite the output file if it already exists. If this flag
+is not set, the program will ask before overwriting.
+</li>
+
 <li><code>stdout</code>: Instead of writing the final output to a file, send it to the standard
-output stream (usually, the screen), making possible to redirect the output to another application.</li>
-<li><code>verbose</code>: While working, print information on the screen about the execution.</li>
-<li><code>visible</code>: Make Haskell code in <code>writehaskell</code> environments visible by default.</li>
+output stream (usually, the screen), making possible to redirect the output to another application.
+</li>
+
+<li><code>verbose</code>: While working, print information on the screen about the execution.
+</li>
+
+<li><code>visible</code>: Make Haskell code in <code>writehaskell</code> environments visible by default.
+</li>
 </ul>
 
 <!-- <h1>Known issues</h1> -->
