@@ -121,6 +121,56 @@ Lines in the output of <code>evalhaskell</code> as <i>environment</i> are bounde
 characters. A line break will be introduced if this number is exceeded.
 </p>
 
+<h2>Using HaTeX</h2>
+
+<p>
+It is possible to use any Haskell type within the <code>evalhaskell</code> command or environment.
+Whatever the result is, it will be added to the LaTeX output using the <code>Show</code> instance
+given by the type of the input expression. Sometimes, this is good enough, but probably you will
+end up wanting a more complex way to display your results. To approach this problem, there is a library
+called <i>HaTeX</i> which defines a <code>LaTeX</code> type. Using this library, you can define your
+own functions from and to this type. In the other hand, <i>haskintex</i> lets you use the command
+<code>hatex</code>. This command receives as input a Haskell expression of type <code>LaTeX</code>
+and generates its corresponding LaTeX code as output. It is recommended to take a look at the
+<i>HaTeX</i> library to make yourself an idea of the possibilities you have. As an example, this is
+how you draw a portion of a logarithmic spiral.
+</p>
+
+<pre>
+\documentclass{article}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\author{Daniel Díaz}
+\title{Embedding HaTeX in \emph{haskintex}}
+\begin{document}
+\maketitle
+Below is the \emph{Spira Mirabilis} inserted using the HaTeX
+package.
+\begin{writehaskell}
+import Text.LaTeX
+import Text.LaTeX.Packages.TikZ.Simple
+
+spiral :: Figure
+spiral = LineWidth (Pt 2) $
+    pathImage 0.01 (0,4) $
+      \t -> ( a * exp t * cos (b*t)
+            , a * exp t * sin (b*t)
+              )
+  where
+    a = 0.1 ; b = 4
+\end{writehaskell}
+\hatex{center $ tikzpicture $ figuretikz spiral}
+\end{document}
+</pre>
+
+<p>
+The example above uses functions from the <code>Text.LaTeX.Packages.TikZ.Simple</code> module, which deals
+with graphic generation using Ti<i>k</i>Z scripts. You may take a look to its
+<a href="http://hackage.haskell.org/package/HaTeX/docs/Text-LaTeX-Packages-TikZ-Simple.html">API documentation</a>
+to fully
+understand the given example.
+</p>
+
 <h1>Code ordering</h1>
 
 <p>
