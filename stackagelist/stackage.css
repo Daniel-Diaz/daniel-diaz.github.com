@@ -13,3 +13,7 @@ h1.title{ text-align: center ;
 p.centered{ text-align: center ; }
 
 p.right{ text-align: right ; }
+
+tr:nth-child(even) {
+    background-color: #DDDDDD;
+}
