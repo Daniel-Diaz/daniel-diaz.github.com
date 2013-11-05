@@ -197,10 +197,12 @@ fact n = n * fact (n-1)
 \end{document}
 </pre>
 
+<p>
 What <i>haskintex</i> does is to traverse the LaTeX code twice. The first time it creates a module
 with all the code defined with <code>writehaskell</code> environments. In the second pass, it evaluates
 all the <code>evalhaskell</code> calls with the created module imported. Note that this means you have to avoid
 duplicated names.
+</p>
 
 <h1>Visibility</h1>
 
