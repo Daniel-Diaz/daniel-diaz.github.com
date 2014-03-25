@@ -177,6 +177,50 @@ to fully
 understand the given example.
 </p>
 
+<h2>Using HaTeX with IO</h2>
+
+<p>
+While the <code>hatex</code> command opens tons of possibilities to generate LaTeX code, it suffers from an unfortunate
+restriction. Since it only accepts expressions of type <code>LaTeX</code>, it will never accept an expression that
+performs IO computations. To solve this, use the <code>iohatex</code> command. It works the same way as the
+<code>hatex</code> does, but it expects an expression of type <code>IO LaTeX</code> instead. Here an example:
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+\begin{writehaskell}
+import Text.LaTeX
+import Data.Time (getCurrentTime)
+import Control.Applicative ((<$>))
+import Data.String (fromString)
+\end{writehaskell}
+I am testing the \texttt{iohatex} command when the time is \iohatex{fromString . show <$> getCurrentTime}.
+\end{document}
+</pre>
+
+<h1>Including Pragmas</h1>
+
+If you include pragmas with the <code>writehaskell</code> environment and run <i>haskintex</i> with the <code>keep</code>
+flag, you will notice that the pragma is include below the <code>module ... where</code> clause, and therefore it is not
+working. To include pragmas, use the <code>haskellpragmas</code> environment. It would go like this:
+
+<pre>
+\documentclass{article}
+\begin{document}
+\begin{haskellpragmas}
+{-# LANGUAGE OverloadedStrings #-}
+\end{haskellpragmas}
+\begin{writehaskell}
+import Text.LaTeX
+
+overloaded :: LaTeX
+overloaded = "This is an Overloaded String."
+\end{writehaskell}
+\hatex{overloaded}
+\end{document}
+</pre>
+
 <h1>Code ordering</h1>
 
 <p>
@@ -198,8 +242,30 @@ fact n = n * fact (n-1)
 </pre>
 
 <p>
-What <i>haskintex</i> does is to traverse the LaTeX code twice. The first time it creates a module
-with all the code defined with <code>writehaskell</code> environments. In the second pass, it evaluates
+Note that this also applies to pragmas. If you include a pragma at the end (see below), it will still apply
+to the Haskell code.
+</p>
+
+<pre>
+\documentclass{article}
+\begin{document}
+\begin{writehaskell}
+import Text.LaTeX
+
+overloaded :: LaTeX
+overloaded = "This is an Overloaded String."
+\end{writehaskell}
+\hatex{overloaded}
+\begin{haskellpragmas}
+{-# LANGUAGE OverloadedStrings #-}
+\end{haskellpragmas}
+\end{document}
+</pre>
+
+<p>
+What <i>haskintex</i> does is to traverse the LaTeX code twice. The first time it creates a Haskell module
+with all the code defined with <code>writehaskell</code> and <code>haskellpragmas</code> environments,
+placing the pragmas at the beginning of the file. In the second pass, it evaluates
 all the <code>evalhaskell</code> calls with the created module imported. Note that this means you have to avoid
 duplicated names.
 </p>
@@ -207,8 +273,8 @@ duplicated names.
 <h1>Visibility</h1>
 
 <p>
-By default, the Haskell code introduced by <code>writehaskell</code> will not show up in
-the processed LaTeX code. To change this, use the <code>visible</code> option.
+By default, the Haskell code introduced by <code>writehaskell</code> or <code>haskellpragmas</code>
+will not show up in the processed LaTeX code. To change this, use the <code>visible</code> option.
 For example:
 </p>
 
@@ -229,7 +295,7 @@ While 5 factorial is \evalhaskell{fact 5}, 10 factorial is
 A <code>verbatim</code> environment will contain the code. To change the default
 behavior and make Haskell code visible by default, pass the <code>-visible</code> flag when
 invoking <code>haskintex</code>. Use then the <code>hidden</code> option to hide specific
-calls to <code>writehaskell</code>.
+calls to <code>writehaskell</code> (or <code>haskellpragmas</code>).
 </p>
 
 <pre>
@@ -291,6 +357,10 @@ output stream (usually, the screen), making possible to redirect the output to a
 </li>
 
 <li><code>visible</code>: Make Haskell code in <code>writehaskell</code> environments visible by default.
+</li>
+
+<li><code>debug</code>: Only for debugging purposes. It writes a file with extension .debughtex with the
+AST of the internal representation of the input file <i>haskintex</i> uses.
 </li>
 </ul>
 
