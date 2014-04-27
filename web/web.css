@@ -1,6 +1,10 @@
-body { margin: 30px 10% ;
+body { margin: 26px 10% ;
        color: #FFFFFF ;
-       background-color: #000000 ; }
+       background-color: #000000 ;
+       overflow: hidden ;
+       }
+
+canvas {width: 100% ; outline:none ;}
 
 p { color: #FFFFFF ;
     text-align: justify ; }
@@ -35,7 +39,7 @@ table { padding: 2px ;
         border-spacing: 10px ;
         margin-bottom: 5px ; }
 
-table.dashed { border: 1px dashed #FFFFFF ; }
+table.dashed { border: 1px dashed #DDDDDD ; }
 
 td { vertical-align: top ; }
 
