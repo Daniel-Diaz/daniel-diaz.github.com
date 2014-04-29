@@ -36,6 +36,12 @@ Otherwise, you can build the current developing version downloading
 <a href="https://github.com/Daniel-Diaz/haskintex/archive/master.zip">its code as a zip file</a>.
 </p>
 
+<p>
+Note that this page will be updated with every new version released to Hackage, so it reflects the features of the
+last released version. If you have a previous version, some of the features explained here may not apply to you.
+To check what version you have installed, run <code>haskintex -help</code>.
+</p>
+
 <h1>How does it work?</h1>
 
 <p>
@@ -316,6 +322,41 @@ You can still use the <code>visible</code> option but it will be pretty much use
 it may be useful if you are switching the <code>-visible</code> flag on and off frequently.
 </p>
 
+<h1>Memorization</h1>
+
+You can tell <code>haskintex</code> to remember the value of an expression to avoid compute
+it twice. This, however, has a drawback: the expression won't be evaluated again, even if
+its actual value changes. These are the tools you can use to control this feature:
+
+<ul>
+
+<li><i>memo option</i>. You can add this option to <code>hatex</code>, <code>iohatex</code>,
+and <code>evalhaskell</code> commands and environments. When the enclosed expression is
+evaluated, its result will be stored in the memo tree (the structure <i>haskintex</i> uses
+internally to store pairs of unevaluated code and its result). The next time the same
+expression is found, if it is marked with <code>memo</code> as well, it won't be evaluated again:
+the stored result will be used instead.
+</li>
+
+<li><i>notmemo option</i>. This option can be applied in the same places than <code>memo</code>.
+It will force a given Haskell expression to be evaluated every time, not using the memo tree.
+</li>
+
+<li><i>memo flag</i>. This flag applies the <code>memo</code> option everywhere it can be applied,
+except for those places where the <code>notmemo</code> option has been specified.
+
+<li><i>memoclean flag</i>. This flag causes <i>haskintex</i> to remove the entire memo tree
+at the end of its execution. This means that if several files are processed in a single
+haskintex call, the memo tree will be removed <i>after</i> processing all the files.
+</li>
+
+</ul>
+
+To sum up: place the <code>memo</code> option to those expressions whose value don't change
+over time and you don't want to compute twice. And let <i>haskintex</i> do the rest.
+Alternatively, use the <code>memo</code> flag and apply the <code>notmemo</code> option
+to those expressions whose value may change over time.
+
 <h1>Flag reference</h1>
 
 <p>
@@ -326,6 +367,10 @@ process the file <code>foo.htex</code> verbosely: <code>haskintex foo -verbose</
 </p>
 
 <ul>
+<li><code>debug</code>: Only for debugging purposes. It writes a file with extension .debughtex with the
+AST of the internal representation of the input file <i>haskintex</i> uses.
+</li>
+
 <li><code>help</code>: Show the version of the program and some information, like usage and
 a description of the different flags.
 </li>
@@ -345,6 +390,15 @@ and <code>writehaskell</code> outputs unchanged. In other words, no <code>verb</
 will be used.
 </li>
 
+<li><code>memo</code>: Unless otherwise specified, every <code>evalhaskell</code>, <code>hatex</code>
+or <code>iohatex</code> command (or environment) will be called with the <code>memo</code> option.
+</li>
+
+<li><code>memoclean</code>: Cleans the memo tree after the execution of <i>haskintex</i>. If
+several files are processed, the memo tree will be cleaned <i>after</i> processing all of
+them. Read more about the memo tree in the <i>Memorization</i> section.
+</li>
+
 <li><code>overwrite</code>: Overwrite the output file if it already exists. If this flag
 is not set, the program will ask before overwriting.
 </li>
@@ -359,9 +413,6 @@ output stream (usually, the screen), making possible to redirect the output to a
 <li><code>visible</code>: Make Haskell code in <code>writehaskell</code> environments visible by default.
 </li>
 
-<li><code>debug</code>: Only for debugging purposes. It writes a file with extension .debughtex with the
-AST of the internal representation of the input file <i>haskintex</i> uses.
-</li>
 </ul>
 
 <!-- <h1>Known issues</h1> -->
