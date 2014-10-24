@@ -34,393 +34,458 @@
 <a name="line-25"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getTransferR</span>
 <a name="line-26"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>putDeleteChunkR</span>
 <a name="line-27"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>putInsertChunkR</span>
-<a name="line-28"></a>    <span class='hs-comment'>-- * Other Yesod Stuff</span>
-<a name="line-29"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>Widget</span>
-<a name="line-30"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>resourcesGlobalVar</span>
-<a name="line-31"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<a name="line-32"></a>
-<a name="line-33"></a><span class='hs-comment'>-- Base</span>
-<a name="line-34"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span> <span class='hs-layout'>(</span><span class='hs-varid'>when</span><span class='hs-layout'>)</span>
-<a name="line-35"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>String</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromString</span><span class='hs-layout'>)</span>
-<a name="line-36"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Char</span> <span class='hs-layout'>(</span><span class='hs-varid'>isDigit</span><span class='hs-layout'>)</span>
-<a name="line-37"></a>
-<a name="line-38"></a><span class='hs-comment'>-- Maps</span>
-<a name="line-39"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IntMap</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span><span class='hs-layout'>)</span>
-<a name="line-40"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IntMap</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span>   <span class='hs-keyword'>as</span> <span class='hs-conid'>LM</span>
-<a name="line-41"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IntMap</span><span class='hs-varop'>.</span><span class='hs-conid'>Strict</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>SM</span>
-<a name="line-42"></a>
-<a name="line-43"></a><span class='hs-comment'>-- Binary list stuff</span>
-<a name="line-44"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>BinaryList</span><span class='hs-varop'>.</span><span class='hs-conid'>Serialize</span> <span class='hs-layout'>(</span><span class='hs-conid'>Decoded</span><span class='hs-layout'>)</span>
-<a name="line-45"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Format</span><span class='hs-varop'>.</span><span class='hs-conid'>BinaryStore</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>BS</span>
-<a name="line-46"></a>
-<a name="line-47"></a><span class='hs-comment'>-- ByteString's</span>
-<a name="line-48"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
-<a name="line-49"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>B</span>
-<a name="line-50"></a>
-<a name="line-51"></a><span class='hs-comment'>-- Yesod</span>
-<a name="line-52"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Yesod</span><span class='hs-varop'>.</span><span class='hs-conid'>Core</span>
-<a name="line-53"></a>         <span class='hs-layout'>(</span> <span class='hs-varid'>parseRoutesFile</span>
-<a name="line-54"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>mkYesod</span><span class='hs-layout'>,</span> <span class='hs-conid'>Yesod</span><span class='hs-layout'>,</span> <span class='hs-varid'>getYesod</span>
-<a name="line-55"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>renderRoute</span>
-<a name="line-56"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>liftIO</span>
-<a name="line-57"></a>         <span class='hs-layout'>,</span> <span class='hs-conid'>TypedContent</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>)</span><span class='hs-layout'>,</span> <span class='hs-varid'>toContent</span>
-<a name="line-58"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>sendResponse</span><span class='hs-layout'>,</span> <span class='hs-varid'>sendResponseStatus</span>
-<a name="line-59"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>addHeader</span>
-<a name="line-60"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>waiRequest</span>
-<a name="line-61"></a>           <span class='hs-layout'>)</span>
-<a name="line-62"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>Wai</span> <span class='hs-layout'>(</span><span class='hs-varid'>lazyRequestBody</span><span class='hs-layout'>)</span>
-<a name="line-63"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>HTTP</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span><span class='hs-varop'>.</span><span class='hs-conid'>Status</span>
-<a name="line-64"></a>         <span class='hs-layout'>(</span> <span class='hs-varid'>badRequest400</span>
-<a name="line-65"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>notFound404</span>
-<a name="line-66"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>internalServerError500</span>
-<a name="line-67"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>notImplemented501</span>
-<a name="line-68"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>serviceUnavailable503</span>
-<a name="line-69"></a>           <span class='hs-layout'>)</span>
-<a name="line-70"></a>
-<a name="line-71"></a><span class='hs-comment'>-- Concurrency</span>
-<a name="line-72"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Concurrent</span><span class='hs-varop'>.</span><span class='hs-conid'>MVar</span>
-<a name="line-73"></a>
-<a name="line-74"></a><span class='hs-comment'>-- Away server (client interface)</span>
-<a name="line-75"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>OnPing</span><span class='hs-varop'>.</span><span class='hs-conid'>DataServer</span><span class='hs-varop'>.</span><span class='hs-conid'>AwayServer</span>
-<a name="line-76"></a>
-<a name="line-77"></a><span class='hs-comment'>-- Aeson (JSON)</span>
-<a name="line-78"></a><span class='hs-comment'>-- import Data.Aeson (Value)</span>
-<a name="line-79"></a>
-<a name="line-80"></a><span class='hs-comment'>-- System</span>
-<a name="line-81"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>FilePath</span> <span class='hs-layout'>(</span><span class='hs-varid'>takeDirectory</span><span class='hs-layout'>)</span>
-<a name="line-82"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Directory</span>
-<a name="line-83"></a>         <span class='hs-layout'>(</span> <span class='hs-varid'>doesFileExist</span>
-<a name="line-84"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>doesDirectoryExist</span>
-<a name="line-85"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>removeFile</span>
-<a name="line-86"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>createDirectoryIfMissing</span>
-<a name="line-87"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>getDirectoryContents</span>
-<a name="line-88"></a>           <span class='hs-layout'>)</span>
-<a name="line-89"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span><span class='hs-varop'>.</span><span class='hs-conid'>Error</span> <span class='hs-layout'>(</span><span class='hs-varid'>catchIOError</span><span class='hs-layout'>)</span>
-<a name="line-90"></a>
-<a name="line-91"></a><span class='hs-comment'>------------------------------------------------</span>
-<a name="line-92"></a><span class='hs-comment'>-- Server Global State</span>
-<a name="line-93"></a>
-<a name="line-94"></a><a name="DecodedData"></a><span class='hs-comment'>-- | Decoded data with holes.</span>
-<a name="line-95"></a><a name="DecodedData"></a><span class='hs-keyword'>type</span> <span class='hs-conid'>DecodedData</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Decoded</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>Double</span><span class='hs-layout'>)</span>
-<a name="line-96"></a>
-<a name="line-97"></a><a name="Counter"></a><span class='hs-comment'>-- | The counter specifies the age of some live</span>
-<a name="line-98"></a><a name="Counter"></a><span class='hs-comment'>--   data. Live data is data kept in memory for</span>
-<a name="line-99"></a><a name="Counter"></a><span class='hs-comment'>--   quick access.</span>
-<a name="line-100"></a><a name="Counter"></a><span class='hs-comment'>--</span>
-<a name="line-101"></a><a name="Counter"></a><span class='hs-comment'>--   The counter has two limits:</span>
-<a name="line-102"></a><a name="Counter"></a><span class='hs-comment'>--</span>
-<a name="line-103"></a><a name="Counter"></a><span class='hs-comment'>--   * /First limit:/ After this limit is reached,</span>
-<a name="line-104"></a><a name="Counter"></a><span class='hs-comment'>--     live data is dropped from the global state,</span>
-<a name="line-105"></a><a name="Counter"></a><span class='hs-comment'>--     but the counter keeps growing. Therefore,</span>
-<a name="line-106"></a><a name="Counter"></a><span class='hs-comment'>--     the counter will stay in memory.</span>
-<a name="line-107"></a><a name="Counter"></a><span class='hs-comment'>--</span>
-<a name="line-108"></a><a name="Counter"></a><span class='hs-comment'>--   * /Second limit:/ After this limit, the file</span>
-<a name="line-109"></a><a name="Counter"></a><span class='hs-comment'>--     pointed by the 'Key' is sent to S3. The</span>
-<a name="line-110"></a><a name="Counter"></a><span class='hs-comment'>--     counter is removed from memory as well.</span>
-<a name="line-111"></a><a name="Counter"></a><span class='hs-comment'>--</span>
-<a name="line-112"></a><a name="Counter"></a><span class='hs-keyword'>type</span> <span class='hs-conid'>Counter</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Int</span>
-<a name="line-113"></a>
-<a name="line-114"></a><a name="LiveValue"></a><span class='hs-comment'>-- | A live value in memory. It might or might not</span>
-<a name="line-115"></a><a name="LiveValue"></a><span class='hs-comment'>--   contain decoded data ('lvData'). If it does</span>
-<a name="line-116"></a><a name="LiveValue"></a><span class='hs-comment'>--   not contain the decoded data, it can be read</span>
-<a name="line-117"></a><a name="LiveValue"></a><span class='hs-comment'>--   from the local disk. The counter ('lvCounter')</span>
-<a name="line-118"></a><a name="LiveValue"></a><span class='hs-comment'>--   tells you how much time this value has been</span>
-<a name="line-119"></a><a name="LiveValue"></a><span class='hs-comment'>--   on memory. See 'Counter'.</span>
-<a name="line-120"></a><a name="LiveValue"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>LiveValue</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>LiveValue</span>
-<a name="line-121"></a>  <span class='hs-layout'>{</span> <span class='hs-comment'>-- | Length index (see 'BL.lengthIndex') of</span>
-<a name="line-122"></a>    <span class='hs-comment'>--   decoded data at full resolution.</span>
-<a name="line-123"></a>    <span class='hs-varid'>lvLength</span>  <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Int</span>
-<a name="line-124"></a>    <span class='hs-comment'>-- | Decoded data in memory.</span>
-<a name="line-125"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>lvData</span>    <span class='hs-keyglyph'>::</span>  <span class='hs-conid'>Maybe</span> <span class='hs-conid'>DecodedData</span>
-<a name="line-126"></a>    <span class='hs-comment'>-- | Counter.</span>
-<a name="line-127"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>lvCounter</span> <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Counter</span>
-<a name="line-128"></a>    <span class='hs-layout'>}</span>
-<a name="line-129"></a>
-<a name="line-130"></a><a name="ServerState"></a><span class='hs-comment'>-- | The server global state.</span>
-<a name="line-131"></a><a name="ServerState"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>ServerState</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>ServerState</span>
-<a name="line-132"></a>  <span class='hs-layout'>{</span> <span class='hs-comment'>-- | 'IntMap' of live data. The first key is the PID</span>
-<a name="line-133"></a>    <span class='hs-comment'>--   of an user. If a PID is not present, there is no</span>
-<a name="line-134"></a>    <span class='hs-comment'>--   live data of that user. You should look at the</span>
-<a name="line-135"></a>    <span class='hs-comment'>--   'AwayServer'. The second key (key of the inner</span>
-<a name="line-136"></a>    <span class='hs-comment'>--   map) refers to the initial time of the data in a</span>
-<a name="line-137"></a>    <span class='hs-comment'>--   binary store. Depending on the usage of the data,</span>
-<a name="line-138"></a>    <span class='hs-comment'>--   initial times will vary.</span>
-<a name="line-139"></a>    <span class='hs-comment'>--</span>
-<a name="line-140"></a>    <span class='hs-comment'>--   /Live value maps should be manipulated strictly, while live/</span>
-<a name="line-141"></a>    <span class='hs-comment'>--   /values should be manipulated lazily./</span>
-<a name="line-142"></a>    <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IntMap</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span> <span class='hs-conid'>LiveValue</span><span class='hs-layout'>)</span>
-<a name="line-143"></a>    <span class='hs-comment'>-- | Server to send the old data.</span>
-<a name="line-144"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>awayServer</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>AwayServer</span>
-<a name="line-145"></a>    <span class='hs-layout'>}</span>
-<a name="line-146"></a>
-<a name="line-147"></a><span class='hs-comment'>------------------------------------------------</span>
-<a name="line-148"></a><span class='hs-comment'>-- Yesod templating</span>
-<a name="line-149"></a>
-<a name="line-150"></a><a name="GlobalVar"></a><span class='hs-comment'>-- | Type of the global variable holding the server state.</span>
-<a name="line-151"></a><a name="GlobalVar"></a><span class='hs-keyword'>newtype</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-layout'>{</span> <span class='hs-varid'>unGlobalVar</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MVar</span> <span class='hs-conid'>ServerState</span> <span class='hs-layout'>}</span>
-<a name="line-152"></a>
-<a name="line-153"></a><a name="mkYesod"></a><span class='hs-definition'>mkYesod</span> <span class='hs-str'>"GlobalVar"</span> <span class='hs-varop'>$</span><span class='hs-layout'>(</span><span class='hs-varid'>parseRoutesFile</span> <span class='hs-str'>"data-server-routes"</span><span class='hs-layout'>)</span>
-<a name="line-154"></a>
-<a name="line-155"></a><a name="instance%20Yesod%20GlobalVar"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Yesod</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-keyword'>where</span>
-<a name="line-156"></a>
-<a name="line-157"></a><span class='hs-comment'>------------------------------------------------</span>
-<a name="line-158"></a><span class='hs-comment'>-- Global Variable creation</span>
-<a name="line-159"></a>
-<a name="line-160"></a><a name="isNumber"></a><span class='hs-definition'>isNumber</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
-<a name="line-161"></a><span class='hs-comment'>{-# INLINE isNumber #-}</span>
-<a name="line-162"></a><span class='hs-definition'>isNumber</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>all</span> <span class='hs-varid'>isDigit</span>
-<a name="line-163"></a>
-<a name="line-164"></a><a name="mapFilterM"></a><span class='hs-comment'>-- | Map a function over a list and filter out the 'Nothing'</span>
-<a name="line-165"></a><span class='hs-comment'>--   values.</span>
-<a name="line-166"></a><span class='hs-definition'>mapFilterM</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Monad</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>b</span><span class='hs-keyglyph'>]</span>
-<a name="line-167"></a><span class='hs-definition'>mapFilterM</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>go</span>
-<a name="line-168"></a>  <span class='hs-keyword'>where</span>
-<a name="line-169"></a>    <span class='hs-varid'>go</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-170"></a>      <span class='hs-varid'>my</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>f</span> <span class='hs-varid'>x</span>
-<a name="line-171"></a>      <span class='hs-varid'>ys</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>go</span> <span class='hs-varid'>xs</span>
-<a name="line-172"></a>      <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>my</span> <span class='hs-keyword'>of</span>
-<a name="line-173"></a>        <span class='hs-conid'>Just</span> <span class='hs-varid'>y</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>y</span> <span class='hs-conop'>:</span> <span class='hs-varid'>ys</span>
-<a name="line-174"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>ys</span>
-<a name="line-175"></a>    <span class='hs-varid'>go</span>  <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>[]</span>
-<a name="line-176"></a>
-<a name="line-177"></a><a name="createGlobalVar"></a><span class='hs-definition'>createGlobalVar</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>AwayServer</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>GlobalVar</span>
-<a name="line-178"></a><span class='hs-definition'>createGlobalVar</span> <span class='hs-varid'>server</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-179"></a>  <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>doesDirectoryExist</span> <span class='hs-str'>"data"</span>
-<a name="line-180"></a>  <span class='hs-varid'>m</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-keyword'>if</span> <span class='hs-varid'>b</span> <span class='hs-keyword'>then</span> <span class='hs-varid'>generateLiveData</span> <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span>
-<a name="line-181"></a>  <span class='hs-varid'>v</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>newMVar</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ServerState</span> 
-<a name="line-182"></a>    <span class='hs-layout'>{</span> <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>m</span>
-<a name="line-183"></a>    <span class='hs-layout'>,</span> <span class='hs-varid'>awayServer</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>server</span>
-<a name="line-184"></a>      <span class='hs-layout'>}</span>
-<a name="line-185"></a>  <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-varid'>v</span>
-<a name="line-186"></a>
-<a name="line-187"></a><a name="generateLiveData"></a><span class='hs-comment'>-- TODO: add comments to this function!</span>
-<a name="line-188"></a><span class='hs-definition'>generateLiveData</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span> <span class='hs-conid'>LiveValue</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-189"></a><span class='hs-definition'>generateLiveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-190"></a>  <span class='hs-varid'>xs</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getDirectoryContents</span> <span class='hs-str'>"data"</span>
-<a name="line-191"></a>  <span class='hs-keyword'>let</span> <span class='hs-varid'>pids</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fmap</span> <span class='hs-varid'>read</span> <span class='hs-varop'>$</span> <span class='hs-varid'>filter</span> <span class='hs-varid'>isNumber</span> <span class='hs-varid'>xs</span>
-<a name="line-192"></a>  <span class='hs-varid'>ps</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>mapM</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>pid</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-193"></a>                 <span class='hs-varid'>ys</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getDirectoryContents</span> <span class='hs-varop'>$</span> <span class='hs-str'>"data/"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>pid</span>
-<a name="line-194"></a>                 <span class='hs-keyword'>let</span> <span class='hs-varid'>tsfps</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>filter</span> <span class='hs-varid'>isNumber</span> <span class='hs-varid'>ys</span>
-<a name="line-195"></a>                 <span class='hs-varid'>lvs</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>mapFilterM</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>tfp</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-196"></a>                                       <span class='hs-keyword'>let</span> <span class='hs-varid'>fp</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"data/"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>pid</span> <span class='hs-varop'>++</span> <span class='hs-str'>"/"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>tfp</span>
-<a name="line-197"></a>                                       <span class='hs-varid'>fl</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>readFile</span> <span class='hs-varid'>fp</span>
-<a name="line-198"></a>                                       <span class='hs-keyword'>case</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>decode</span> <span class='hs-varid'>fl</span> <span class='hs-keyword'>of</span>
-<a name="line-199"></a>                                         <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-200"></a>                                           <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"File ("</span> <span class='hs-varop'>++</span> <span class='hs-varid'>fp</span> <span class='hs-varop'>++</span> <span class='hs-str'>") does not contain "</span>
-<a name="line-201"></a>                                                   <span class='hs-varop'>++</span> <span class='hs-str'>"a valid binary store: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>err</span>
-<a name="line-202"></a>                                           <span class='hs-varid'>return</span> <span class='hs-conid'>Nothing</span>
-<a name="line-203"></a>                                         <span class='hs-conid'>Right</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Just</span>
-<a name="line-204"></a>                                           <span class='hs-layout'>(</span> <span class='hs-varid'>read</span> <span class='hs-varid'>tfp</span>
-<a name="line-205"></a>                                           <span class='hs-layout'>,</span> <span class='hs-conid'>LiveValue</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>bsLength</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span>
-<a name="line-206"></a>                                                       <span class='hs-comment'>-- Now that we have read the file...</span>
-<a name="line-207"></a>                                                       <span class='hs-comment'>-- Why not keeping in memory what we</span>
-<a name="line-208"></a>                                                       <span class='hs-comment'>-- have read so far?</span>
-<a name="line-209"></a>                                                       <span class='hs-layout'>(</span><span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>readBinaryStore</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span>
-<a name="line-210"></a>                                                       <span class='hs-num'>0</span>
-<a name="line-211"></a>                                             <span class='hs-layout'>)</span>
-<a name="line-212"></a>                                      <span class='hs-layout'>)</span> <span class='hs-varid'>tsfps</span>
-<a name="line-213"></a>                 <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>pid</span><span class='hs-layout'>,</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>fromList</span> <span class='hs-varid'>lvs</span><span class='hs-layout'>)</span>
-<a name="line-214"></a>                             <span class='hs-layout'>)</span> <span class='hs-varid'>pids</span>
-<a name="line-215"></a>  <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>fromList</span> <span class='hs-varid'>ps</span>
-<a name="line-216"></a>
-<a name="line-217"></a><span class='hs-comment'>------------------------------------------------</span>
-<a name="line-218"></a><span class='hs-comment'>-- Manipulating the state</span>
-<a name="line-219"></a>
-<a name="line-220"></a><a name="withVar"></a><span class='hs-comment'>-- | Perform an action using the global variable.</span>
-<a name="line-221"></a><span class='hs-definition'>withVar</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MVar</span> <span class='hs-conid'>ServerState</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-varid'>a</span>
-<a name="line-222"></a><span class='hs-comment'>{-# INLINE withVar #-}</span>
-<a name="line-223"></a><span class='hs-definition'>withVar</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>getYesod</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>.</span> <span class='hs-varid'>f</span> <span class='hs-varop'>.</span> <span class='hs-varid'>unGlobalVar</span>
-<a name="line-224"></a>
-<a name="line-225"></a><a name="get"></a><span class='hs-comment'>-- | Read the current global state.</span>
-<a name="line-226"></a><span class='hs-definition'>get</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>ServerState</span>
-<a name="line-227"></a><span class='hs-comment'>{-# INLINE get #-}</span>
-<a name="line-228"></a><span class='hs-definition'>get</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>withVar</span> <span class='hs-varid'>readMVar</span>
-<a name="line-229"></a>
-<a name="line-230"></a><a name="modify"></a><span class='hs-comment'>-- | Modify the current state. The global state will</span>
-<a name="line-231"></a><span class='hs-comment'>--   be blocked from reading (see 'get') while this</span>
-<a name="line-232"></a><span class='hs-comment'>--   operation is performed.</span>
-<a name="line-233"></a><span class='hs-definition'>modify</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>ServerState</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ServerState</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
-<a name="line-234"></a><span class='hs-comment'>{-# INLINE modify #-}</span>
-<a name="line-235"></a><span class='hs-definition'>modify</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>withVar</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>v</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>takeMVar</span> <span class='hs-varid'>v</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-varid'>putMVar</span> <span class='hs-varid'>v</span> <span class='hs-varop'>.</span> <span class='hs-varid'>f</span>
-<a name="line-236"></a>
-<a name="line-237"></a><span class='hs-comment'>{-
-<a name="line-238"></a>
-<a name="line-239"></a>Note that there is no 'put' operation in the Server monad.
-<a name="line-240"></a>This is because the underlying MVar is /always/ full (except
-<a name="line-241"></a>if it's in the middle of a 'modify' call). A 'put' operation
-<a name="line-242"></a>would therefore result in a block.
-<a name="line-243"></a>
-<a name="line-244"></a>-}</span>
-<a name="line-245"></a>
-<a name="line-246"></a><a name="addDecoded"></a><span class='hs-comment'>-- | Add 'DecodedData' to memory (global state).</span>
-<a name="line-247"></a><span class='hs-definition'>addDecoded</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
-<a name="line-248"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
-<a name="line-249"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Length index of decoded data at full resolution.</span>
-<a name="line-250"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-conid'>DecodedData</span> <span class='hs-comment'>-- ^ Decoded data.</span>
-<a name="line-251"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
-<a name="line-252"></a><span class='hs-comment'>{-# INLINE addDecoded #-}</span>
-<a name="line-253"></a><span class='hs-definition'>addDecoded</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-varid'>l</span> <span class='hs-varid'>dd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modify</span> <span class='hs-varop'>$</span>
-<a name="line-254"></a>  <span class='hs-keyglyph'>\</span><span class='hs-varid'>st</span> <span class='hs-keyglyph'>-&gt;</span>
-<a name="line-255"></a>     <span class='hs-keyword'>let</span> <span class='hs-varid'>lv</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>LiveValue</span> <span class='hs-varid'>l</span> <span class='hs-varid'>dd</span> <span class='hs-num'>0</span>
-<a name="line-256"></a>     <span class='hs-keyword'>in</span>  <span class='hs-varid'>st</span> <span class='hs-layout'>{</span> <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>alter</span>
-<a name="line-257"></a>                <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-keyword'>case</span>
-<a name="line-258"></a>                    <span class='hs-conid'>Just</span> <span class='hs-varid'>m</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>insert</span> <span class='hs-varid'>t</span> <span class='hs-varid'>lv</span> <span class='hs-varid'>m</span>
-<a name="line-259"></a>                    <span class='hs-keyword'>_</span>       <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-varid'>t</span> <span class='hs-varid'>lv</span>
-<a name="line-260"></a>                 <span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span> <span class='hs-layout'>}</span>
-<a name="line-261"></a>
-<a name="line-262"></a><a name="removeLiveValue"></a><span class='hs-comment'>-- | Remove a live value from memory.</span>
-<a name="line-263"></a><span class='hs-definition'>removeLiveValue</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
-<a name="line-264"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
-<a name="line-265"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
-<a name="line-266"></a><span class='hs-comment'>{-# INLINE removeLiveValue #-}</span>
-<a name="line-267"></a><span class='hs-definition'>removeLiveValue</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modify</span> <span class='hs-varop'>$</span>
-<a name="line-268"></a>  <span class='hs-keyglyph'>\</span><span class='hs-varid'>st</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>st</span> <span class='hs-layout'>{</span> <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>alter</span> <span class='hs-layout'>(</span><span class='hs-varid'>fmap</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>delete</span> <span class='hs-varid'>t</span><span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span> <span class='hs-layout'>}</span>
-<a name="line-269"></a>
-<a name="line-270"></a><span class='hs-comment'>------------------------------------------------</span>
-<a name="line-271"></a><span class='hs-comment'>-- Utils</span>
-<a name="line-272"></a>
-<a name="line-273"></a><a name="writeFilePlus"></a><span class='hs-comment'>-- | Write a file and any parent directories if needed.</span>
-<a name="line-274"></a><span class='hs-definition'>writeFilePlus</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
-<a name="line-275"></a><span class='hs-definition'>writeFilePlus</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-276"></a>  <span class='hs-keyword'>let</span> <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeDirectory</span> <span class='hs-varid'>fp</span>
-<a name="line-277"></a>  <span class='hs-varid'>createDirectoryIfMissing</span> <span class='hs-conid'>True</span> <span class='hs-varid'>d</span>
-<a name="line-278"></a>  <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>writeFile</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>bs</span>
-<a name="line-279"></a>
-<a name="line-280"></a><span class='hs-comment'>------------------------------------------------</span>
-<a name="line-281"></a><span class='hs-comment'>-- Requests</span>
-<a name="line-282"></a>
-<a name="line-283"></a><a name="binaryContent"></a><span class='hs-definition'>binaryContent</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>TypedContent</span>
-<a name="line-284"></a><span class='hs-definition'>binaryContent</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>TypedContent</span> <span class='hs-str'>"binary/octet-stream"</span> <span class='hs-varop'>.</span> <span class='hs-varid'>toContent</span>
-<a name="line-285"></a>
-<a name="line-286"></a><a name="getTransferR"></a><span class='hs-comment'>-- | Send a chunk of data to the requester. It sends a 404 response</span>
-<a name="line-287"></a><span class='hs-comment'>--   if the chunk can't be found. If not found in the server, it</span>
-<a name="line-288"></a><span class='hs-comment'>--   will ask to the configured 'AwayServer'. The 404 response contains</span>
-<a name="line-289"></a><span class='hs-comment'>--   an error description in its body. Otherwise (200 response), the</span>
-<a name="line-290"></a><span class='hs-comment'>--   body contains the chunk in binary format.</span>
-<a name="line-291"></a><span class='hs-comment'>--</span>
-<a name="line-292"></a><span class='hs-comment'>--   When the transference is accomplished, the response might be</span>
-<a name="line-293"></a><span class='hs-comment'>--   delayed by some seconds. This is because the server must make</span>
-<a name="line-294"></a><span class='hs-comment'>--   sure that - in case that the chunk was retrieved from the away</span>
-<a name="line-295"></a><span class='hs-comment'>--   server - the chunk no longer stays stored at the away server,</span>
-<a name="line-296"></a><span class='hs-comment'>--   thus avoiding conflicting copies to roll around. If, after a fixed</span>
-<a name="line-297"></a><span class='hs-comment'>--   number of tries, the file from the away server is not deleted,</span>
-<a name="line-298"></a><span class='hs-comment'>--   this server will stop trying and will report an error. However,</span>
-<a name="line-299"></a><span class='hs-comment'>--   even if an error is reported, the transferred data will still</span>
-<a name="line-300"></a><span class='hs-comment'>--   be included in the response body. A 200 response means that everything</span>
-<a name="line-301"></a><span class='hs-comment'>--   worked as expected. A 500 response means that the deletion on the</span>
-<a name="line-302"></a><span class='hs-comment'>--   away server failed. The details will be prompted in the server,</span>
-<a name="line-303"></a><span class='hs-comment'>--   and the HTTP response will contain the error in a @X-Error@ header.</span>
-<a name="line-304"></a><span class='hs-comment'>--</span>
-<a name="line-305"></a><span class='hs-comment'>--   If a transference is done from an away server, but the data transferred</span>
-<a name="line-306"></a><span class='hs-comment'>--   was found corrupt, a 501 response will be sent, with the response body</span>
-<a name="line-307"></a><span class='hs-comment'>--   describing the error.</span>
-<a name="line-308"></a><span class='hs-definition'>getTransferR</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
-<a name="line-309"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
-<a name="line-310"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>TypedContent</span>
-<a name="line-311"></a><span class='hs-definition'>getTransferR</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-312"></a>  <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>get</span>
-<a name="line-313"></a>  <span class='hs-keyword'>case</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>pid</span> <span class='hs-layout'>(</span><span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>t</span> <span class='hs-keyword'>of</span>
-<a name="line-314"></a>    <span class='hs-comment'>-- Chunk is not present in local disk</span>
-<a name="line-315"></a>    <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-316"></a>      <span class='hs-comment'>-- Ask away server</span>
-<a name="line-317"></a>      <span class='hs-varid'>transr</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>clientTransfer</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
-<a name="line-318"></a>      <span class='hs-keyword'>case</span> <span class='hs-varid'>transr</span> <span class='hs-keyword'>of</span>
-<a name="line-319"></a>        <span class='hs-comment'>-- Not found</span>
-<a name="line-320"></a>        <span class='hs-conid'>TransferNotFound</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>notFound404</span> <span class='hs-conid'>()</span>
-<a name="line-321"></a>        <span class='hs-comment'>-- Some error</span>
-<a name="line-322"></a>        <span class='hs-conid'>TransferError</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>internalServerError500</span> <span class='hs-varid'>err</span>
-<a name="line-323"></a>        <span class='hs-comment'>-- Found in away server!</span>
-<a name="line-324"></a>        <span class='hs-conid'>TransferFound</span> <span class='hs-varid'>b</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-325"></a>          <span class='hs-comment'>-- Check that it is well encoded (required to extract length).</span>
-<a name="line-326"></a>          <span class='hs-comment'>-- There is no problem about doing this since only the header</span>
-<a name="line-327"></a>          <span class='hs-comment'>-- needs to be read.</span>
-<a name="line-328"></a>          <span class='hs-keyword'>case</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>decode</span> <span class='hs-varid'>b</span> <span class='hs-keyword'>of</span>
-<a name="line-329"></a>            <span class='hs-comment'>-- Error decoding. This should NEVER happen. If it does...</span>
-<a name="line-330"></a>            <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-331"></a>              <span class='hs-comment'>-- Print error in server</span>
-<a name="line-332"></a>              <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"getTransferR: Error retrieving ("</span>
-<a name="line-333"></a>                               <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>
-<a name="line-334"></a>                               <span class='hs-varop'>++</span> <span class='hs-str'>") chunk: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>err</span>
-<a name="line-335"></a>              <span class='hs-comment'>-- Send 501 response with error in the body</span>
-<a name="line-336"></a>              <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>notImplemented501</span> <span class='hs-varid'>err</span>
-<a name="line-337"></a>            <span class='hs-conid'>Right</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-338"></a>              <span class='hs-comment'>-- Write it to local disk</span>
-<a name="line-339"></a>              <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>writeFilePlus</span> <span class='hs-layout'>(</span><span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span><span class='hs-layout'>)</span> <span class='hs-varid'>b</span>
-<a name="line-340"></a>              <span class='hs-comment'>-- Add it to memory</span>
-<a name="line-341"></a>              <span class='hs-varid'>addDecoded</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>bsLength</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span> <span class='hs-conid'>Nothing</span>
-<a name="line-342"></a>              <span class='hs-comment'>-- Once written, ask (please) to away server to</span>
-<a name="line-343"></a>              <span class='hs-comment'>-- remove it</span>
-<a name="line-344"></a>              <span class='hs-varid'>res</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>clientDeleteChunkPlease</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-num'>10</span>
-<a name="line-345"></a>              <span class='hs-keyword'>case</span> <span class='hs-varid'>res</span> <span class='hs-keyword'>of</span>
-<a name="line-346"></a>                <span class='hs-comment'>-- Send OK response with the binary content</span>
-<a name="line-347"></a>                <span class='hs-conid'>Right</span> <span class='hs-conid'>True</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
-<a name="line-348"></a>                <span class='hs-conid'>Right</span> <span class='hs-conid'>False</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-349"></a>                  <span class='hs-comment'>-- Print error in server</span>
-<a name="line-350"></a>                  <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"getTransferR: Could not delete chunk from "</span>
-<a name="line-351"></a>                                   <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>
-<a name="line-352"></a>                  <span class='hs-comment'>-- Send ERROR response with the binary content</span>
-<a name="line-353"></a>                  <span class='hs-varid'>addHeader</span> <span class='hs-str'>"X-Error"</span> <span class='hs-str'>"System error"</span>
-<a name="line-354"></a>                  <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>internalServerError500</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
-<a name="line-355"></a>                <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-356"></a>                  <span class='hs-comment'>-- Print error in server</span>
-<a name="line-357"></a>                  <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"getTransferR: Error deleting ("</span>
-<a name="line-358"></a>                                   <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>
-<a name="line-359"></a>                                   <span class='hs-varop'>++</span> <span class='hs-str'>") chunk: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>err</span>
-<a name="line-360"></a>                  <span class='hs-comment'>-- Send ERROR response with the binary content</span>
-<a name="line-361"></a>                  <span class='hs-varid'>addHeader</span> <span class='hs-str'>"X-Error"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromString</span> <span class='hs-varid'>err</span>
-<a name="line-362"></a>                  <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>internalServerError500</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
-<a name="line-363"></a>    <span class='hs-comment'>-- Chunk is in local disk!</span>
-<a name="line-364"></a>    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-365"></a>        <span class='hs-comment'>-- Just read the file...</span>
-<a name="line-366"></a>        <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>readFile</span> <span class='hs-varop'>$</span> <span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
-<a name="line-367"></a>        <span class='hs-comment'>-- ... and send it over :)</span>
-<a name="line-368"></a>        <span class='hs-varid'>sendResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
-<a name="line-369"></a>
-<a name="line-370"></a><a name="putDeleteChunkR"></a><span class='hs-comment'>-- | Delete a chunk of data from the server, removing it</span>
-<a name="line-371"></a><span class='hs-comment'>--   from both memory and local disk. If it does not exist,</span>
-<a name="line-372"></a><span class='hs-comment'>--   this does nothing and reports success.</span>
-<a name="line-373"></a><span class='hs-definition'>putDeleteChunkR</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
-<a name="line-374"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
-<a name="line-375"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
-<a name="line-376"></a><span class='hs-definition'>putDeleteChunkR</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-377"></a>  <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>get</span>
-<a name="line-378"></a>  <span class='hs-keyword'>case</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>pid</span> <span class='hs-layout'>(</span><span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>t</span> <span class='hs-keyword'>of</span>
-<a name="line-379"></a>    <span class='hs-comment'>-- Chunk is in local disk</span>
-<a name="line-380"></a>    <span class='hs-conid'>Just</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-381"></a>      <span class='hs-comment'>-- Remove value from memory</span>
-<a name="line-382"></a>      <span class='hs-varid'>removeLiveValue</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
-<a name="line-383"></a>      <span class='hs-comment'>-- Delete file (catching any IOError)</span>
-<a name="line-384"></a>      <span class='hs-varid'>res</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>catchIOError</span>
-<a name="line-385"></a>               <span class='hs-layout'>(</span><span class='hs-keyword'>do</span> <span class='hs-keyword'>let</span> <span class='hs-varid'>fp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
-<a name="line-386"></a>                   <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>doesFileExist</span> <span class='hs-varid'>fp</span>
-<a name="line-387"></a>                   <span class='hs-varid'>when</span> <span class='hs-varid'>b</span> <span class='hs-varop'>$</span> <span class='hs-varid'>removeFile</span> <span class='hs-varid'>fp</span>
-<a name="line-388"></a>                   <span class='hs-varid'>return</span> <span class='hs-conid'>Nothing</span><span class='hs-layout'>)</span>
-<a name="line-389"></a>               <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-varop'>.</span> <span class='hs-conid'>Just</span><span class='hs-layout'>)</span>
-<a name="line-390"></a>      <span class='hs-keyword'>case</span> <span class='hs-varid'>res</span> <span class='hs-keyword'>of</span>
-<a name="line-391"></a>        <span class='hs-comment'>-- Error removing file! Report the error and let the</span>
-<a name="line-392"></a>        <span class='hs-comment'>-- client decide if it wants to try again.</span>
-<a name="line-393"></a>        <span class='hs-conid'>Just</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>serviceUnavailable503</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>err</span>
-<a name="line-394"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponse</span> <span class='hs-conid'>()</span>
-<a name="line-395"></a>    <span class='hs-comment'>-- Chunk is not present in local disk (nothing to do)</span>
-<a name="line-396"></a>    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponse</span> <span class='hs-conid'>()</span>
-<a name="line-397"></a>
-<a name="line-398"></a><a name="putInsertChunkR"></a><span class='hs-comment'>-- | Insert a chunk received from a client request. It returns a 400 response</span>
-<a name="line-399"></a><span class='hs-comment'>--   if the header of the chunk is malformed. In that case, the body of the</span>
-<a name="line-400"></a><span class='hs-comment'>--   response will contain the error. Otherwise, a 200 response is sent.</span>
-<a name="line-401"></a><span class='hs-definition'>putInsertChunkR</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
-<a name="line-402"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
-<a name="line-403"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
-<a name="line-404"></a><span class='hs-definition'>putInsertChunkR</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
-<a name="line-405"></a>  <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>waiRequest</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>.</span> <span class='hs-varid'>lazyRequestBody</span> <span class='hs-comment'>-- Network.Wai</span>
-<a name="line-406"></a>  <span class='hs-keyword'>case</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>decode</span> <span class='hs-varid'>b</span> <span class='hs-keyword'>of</span>
-<a name="line-407"></a>    <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>badRequest400</span> <span class='hs-varid'>err</span>
-<a name="line-408"></a>    <span class='hs-conid'>Right</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
-<a name="line-409"></a>      <span class='hs-comment'>-- If the header is fine, write the file (this will consume the</span>
-<a name="line-410"></a>      <span class='hs-comment'>-- full bytestring)</span>
-<a name="line-411"></a>      <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>writeFilePlus</span> <span class='hs-layout'>(</span><span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span><span class='hs-layout'>)</span> <span class='hs-varid'>b</span>
-<a name="line-412"></a>      <span class='hs-comment'>-- Once is written, it is safe (and necessary) to add it to</span>
-<a name="line-413"></a>      <span class='hs-comment'>-- the memory.</span>
-<a name="line-414"></a>      <span class='hs-varid'>addDecoded</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>bsLength</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span> <span class='hs-conid'>Nothing</span>
-<a name="line-415"></a>      <span class='hs-varid'>sendResponse</span> <span class='hs-conid'>()</span>
+<a name="line-28"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>getRangeKeysR</span>
+<a name="line-29"></a>    <span class='hs-comment'>-- * Other Yesod Stuff</span>
+<a name="line-30"></a>  <span class='hs-layout'>,</span> <span class='hs-conid'>Widget</span>
+<a name="line-31"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>resourcesGlobalVar</span>
+<a name="line-32"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-33"></a>
+<a name="line-34"></a><span class='hs-comment'>-- Base</span>
+<a name="line-35"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Monad</span> <span class='hs-layout'>(</span><span class='hs-varid'>when</span><span class='hs-layout'>)</span>
+<a name="line-36"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>String</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromString</span><span class='hs-layout'>)</span>
+<a name="line-37"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Char</span> <span class='hs-layout'>(</span><span class='hs-varid'>isDigit</span><span class='hs-layout'>)</span>
+<a name="line-38"></a>
+<a name="line-39"></a><span class='hs-comment'>-- Maps</span>
+<a name="line-40"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IntMap</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span><span class='hs-layout'>)</span>
+<a name="line-41"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IntMap</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span>   <span class='hs-keyword'>as</span> <span class='hs-conid'>LM</span>
+<a name="line-42"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>IntMap</span><span class='hs-varop'>.</span><span class='hs-conid'>Strict</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>SM</span>
+<a name="line-43"></a>
+<a name="line-44"></a><span class='hs-comment'>-- Binary list stuff</span>
+<a name="line-45"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>BinaryList</span><span class='hs-varop'>.</span><span class='hs-conid'>Serialize</span> <span class='hs-layout'>(</span><span class='hs-conid'>Decoded</span><span class='hs-layout'>)</span>
+<a name="line-46"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Format</span><span class='hs-varop'>.</span><span class='hs-conid'>BinaryStore</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>BS</span>
+<a name="line-47"></a>
+<a name="line-48"></a><span class='hs-comment'>-- ByteString's</span>
+<a name="line-49"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span> <span class='hs-layout'>(</span><span class='hs-conid'>ByteString</span><span class='hs-layout'>)</span>
+<a name="line-50"></a><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>ByteString</span><span class='hs-varop'>.</span><span class='hs-conid'>Lazy</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>B</span>
+<a name="line-51"></a>
+<a name="line-52"></a><span class='hs-comment'>-- Yesod</span>
+<a name="line-53"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Yesod</span><span class='hs-varop'>.</span><span class='hs-conid'>Core</span>
+<a name="line-54"></a>         <span class='hs-layout'>(</span> <span class='hs-varid'>parseRoutesFile</span>
+<a name="line-55"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>mkYesod</span><span class='hs-layout'>,</span> <span class='hs-conid'>Yesod</span><span class='hs-layout'>,</span> <span class='hs-varid'>getYesod</span>
+<a name="line-56"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>renderRoute</span>
+<a name="line-57"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>liftIO</span>
+<a name="line-58"></a>         <span class='hs-layout'>,</span> <span class='hs-conid'>TypedContent</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>)</span><span class='hs-layout'>,</span> <span class='hs-varid'>toContent</span>
+<a name="line-59"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>sendResponse</span><span class='hs-layout'>,</span> <span class='hs-varid'>sendResponseStatus</span>
+<a name="line-60"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>addHeader</span>
+<a name="line-61"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>waiRequest</span>
+<a name="line-62"></a>           <span class='hs-layout'>)</span>
+<a name="line-63"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>Wai</span> <span class='hs-layout'>(</span><span class='hs-varid'>lazyRequestBody</span><span class='hs-layout'>)</span>
+<a name="line-64"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Network</span><span class='hs-varop'>.</span><span class='hs-conid'>HTTP</span><span class='hs-varop'>.</span><span class='hs-conid'>Types</span><span class='hs-varop'>.</span><span class='hs-conid'>Status</span>
+<a name="line-65"></a>         <span class='hs-layout'>(</span> <span class='hs-varid'>badRequest400</span>
+<a name="line-66"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>notFound404</span>
+<a name="line-67"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>internalServerError500</span>
+<a name="line-68"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>notImplemented501</span>
+<a name="line-69"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>serviceUnavailable503</span>
+<a name="line-70"></a>           <span class='hs-layout'>)</span>
+<a name="line-71"></a>
+<a name="line-72"></a><span class='hs-comment'>-- Concurrency</span>
+<a name="line-73"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Control</span><span class='hs-varop'>.</span><span class='hs-conid'>Concurrent</span><span class='hs-varop'>.</span><span class='hs-conid'>MVar</span>
+<a name="line-74"></a>
+<a name="line-75"></a><span class='hs-comment'>-- Away server (client interface)</span>
+<a name="line-76"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>OnPing</span><span class='hs-varop'>.</span><span class='hs-conid'>DataServer</span><span class='hs-varop'>.</span><span class='hs-conid'>AwayServer</span>
+<a name="line-77"></a>
+<a name="line-78"></a><span class='hs-comment'>-- Aeson (JSON)</span>
+<a name="line-79"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Aeson</span> <span class='hs-layout'>(</span><span class='hs-conid'>Value</span><span class='hs-layout'>,</span> <span class='hs-varid'>toJSON</span><span class='hs-layout'>)</span>
+<a name="line-80"></a>
+<a name="line-81"></a><span class='hs-comment'>-- System</span>
+<a name="line-82"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>FilePath</span> <span class='hs-layout'>(</span><span class='hs-varid'>takeDirectory</span><span class='hs-layout'>)</span>
+<a name="line-83"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>Directory</span>
+<a name="line-84"></a>         <span class='hs-layout'>(</span> <span class='hs-varid'>doesFileExist</span>
+<a name="line-85"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>doesDirectoryExist</span>
+<a name="line-86"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>removeFile</span>
+<a name="line-87"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>createDirectoryIfMissing</span>
+<a name="line-88"></a>         <span class='hs-layout'>,</span> <span class='hs-varid'>getDirectoryContents</span>
+<a name="line-89"></a>           <span class='hs-layout'>)</span>
+<a name="line-90"></a><span class='hs-keyword'>import</span> <span class='hs-conid'>System</span><span class='hs-varop'>.</span><span class='hs-conid'>IO</span><span class='hs-varop'>.</span><span class='hs-conid'>Error</span> <span class='hs-layout'>(</span><span class='hs-varid'>catchIOError</span><span class='hs-layout'>)</span>
+<a name="line-91"></a>
+<a name="line-92"></a><span class='hs-comment'>------------------------------------------------</span>
+<a name="line-93"></a><span class='hs-comment'>-- Server Global State</span>
+<a name="line-94"></a>
+<a name="line-95"></a><a name="DecodedData"></a><span class='hs-comment'>-- | Decoded data with holes.</span>
+<a name="line-96"></a><a name="DecodedData"></a><span class='hs-keyword'>type</span> <span class='hs-conid'>DecodedData</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Decoded</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-conid'>Double</span><span class='hs-layout'>)</span>
+<a name="line-97"></a>
+<a name="line-98"></a><a name="Counter"></a><span class='hs-comment'>-- | The counter specifies the age of some live</span>
+<a name="line-99"></a><a name="Counter"></a><span class='hs-comment'>--   data. Live data is data kept in memory for</span>
+<a name="line-100"></a><a name="Counter"></a><span class='hs-comment'>--   quick access.</span>
+<a name="line-101"></a><a name="Counter"></a><span class='hs-comment'>--</span>
+<a name="line-102"></a><a name="Counter"></a><span class='hs-comment'>--   The counter has two limits:</span>
+<a name="line-103"></a><a name="Counter"></a><span class='hs-comment'>--</span>
+<a name="line-104"></a><a name="Counter"></a><span class='hs-comment'>--   * /First limit:/ After this limit is reached,</span>
+<a name="line-105"></a><a name="Counter"></a><span class='hs-comment'>--     live data is dropped from the global state,</span>
+<a name="line-106"></a><a name="Counter"></a><span class='hs-comment'>--     but the counter keeps growing. Therefore,</span>
+<a name="line-107"></a><a name="Counter"></a><span class='hs-comment'>--     the counter will stay in memory.</span>
+<a name="line-108"></a><a name="Counter"></a><span class='hs-comment'>--</span>
+<a name="line-109"></a><a name="Counter"></a><span class='hs-comment'>--   * /Second limit:/ After this limit, the file</span>
+<a name="line-110"></a><a name="Counter"></a><span class='hs-comment'>--     pointed by the 'Key' is sent to S3. The</span>
+<a name="line-111"></a><a name="Counter"></a><span class='hs-comment'>--     counter is removed from memory as well.</span>
+<a name="line-112"></a><a name="Counter"></a><span class='hs-comment'>--</span>
+<a name="line-113"></a><a name="Counter"></a><span class='hs-keyword'>type</span> <span class='hs-conid'>Counter</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Int</span>
+<a name="line-114"></a>
+<a name="line-115"></a><a name="LiveValue"></a><span class='hs-comment'>-- | A live value in memory. It might or might not</span>
+<a name="line-116"></a><a name="LiveValue"></a><span class='hs-comment'>--   contain decoded data ('lvData'). If it does</span>
+<a name="line-117"></a><a name="LiveValue"></a><span class='hs-comment'>--   not contain the decoded data, it can be read</span>
+<a name="line-118"></a><a name="LiveValue"></a><span class='hs-comment'>--   from the local disk. The counter ('lvCounter')</span>
+<a name="line-119"></a><a name="LiveValue"></a><span class='hs-comment'>--   tells you how much time this value has been</span>
+<a name="line-120"></a><a name="LiveValue"></a><span class='hs-comment'>--   on memory. See 'Counter'.</span>
+<a name="line-121"></a><a name="LiveValue"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>LiveValue</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>LiveValue</span>
+<a name="line-122"></a>  <span class='hs-layout'>{</span> <span class='hs-comment'>-- | Length index (see 'BL.lengthIndex') of</span>
+<a name="line-123"></a>    <span class='hs-comment'>--   decoded data at full resolution.</span>
+<a name="line-124"></a>    <span class='hs-varid'>lvLength</span>  <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Int</span>
+<a name="line-125"></a>    <span class='hs-comment'>-- | Decoded data in memory.</span>
+<a name="line-126"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>lvData</span>    <span class='hs-keyglyph'>::</span>  <span class='hs-conid'>Maybe</span> <span class='hs-conid'>DecodedData</span>
+<a name="line-127"></a>    <span class='hs-comment'>-- | Counter.</span>
+<a name="line-128"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>lvCounter</span> <span class='hs-keyglyph'>::</span> <span class='hs-varop'>!</span><span class='hs-conid'>Counter</span>
+<a name="line-129"></a>    <span class='hs-layout'>}</span>
+<a name="line-130"></a>
+<a name="line-131"></a><a name="ServerState"></a><span class='hs-comment'>-- | The server global state.</span>
+<a name="line-132"></a><a name="ServerState"></a><span class='hs-keyword'>data</span> <span class='hs-conid'>ServerState</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>ServerState</span>
+<a name="line-133"></a>  <span class='hs-layout'>{</span> <span class='hs-comment'>-- | 'IntMap' of live data. The first key is the PID</span>
+<a name="line-134"></a>    <span class='hs-comment'>--   of an user. If a PID is not present, there is no</span>
+<a name="line-135"></a>    <span class='hs-comment'>--   live data of that user. You should look at the</span>
+<a name="line-136"></a>    <span class='hs-comment'>--   'AwayServer'. The second key (key of the inner</span>
+<a name="line-137"></a>    <span class='hs-comment'>--   map) refers to the initial time of the data in a</span>
+<a name="line-138"></a>    <span class='hs-comment'>--   binary store. Depending on the usage of the data,</span>
+<a name="line-139"></a>    <span class='hs-comment'>--   initial times will vary.</span>
+<a name="line-140"></a>    <span class='hs-comment'>--</span>
+<a name="line-141"></a>    <span class='hs-comment'>--   /Live value maps should be manipulated strictly, while live/</span>
+<a name="line-142"></a>    <span class='hs-comment'>--   /values should be manipulated lazily./</span>
+<a name="line-143"></a>    <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IntMap</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span> <span class='hs-conid'>LiveValue</span><span class='hs-layout'>)</span>
+<a name="line-144"></a>    <span class='hs-comment'>-- | Server to send the old data.</span>
+<a name="line-145"></a>  <span class='hs-layout'>,</span> <span class='hs-varid'>awayServer</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>AwayServer</span>
+<a name="line-146"></a>    <span class='hs-layout'>}</span>
+<a name="line-147"></a>
+<a name="line-148"></a><span class='hs-comment'>------------------------------------------------</span>
+<a name="line-149"></a><span class='hs-comment'>-- Yesod templating</span>
+<a name="line-150"></a>
+<a name="line-151"></a><a name="GlobalVar"></a><span class='hs-comment'>-- | Type of the global variable holding the server state.</span>
+<a name="line-152"></a><a name="GlobalVar"></a><span class='hs-keyword'>newtype</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-layout'>{</span> <span class='hs-varid'>unGlobalVar</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>MVar</span> <span class='hs-conid'>ServerState</span> <span class='hs-layout'>}</span>
+<a name="line-153"></a>
+<a name="line-154"></a><a name="mkYesod"></a><span class='hs-definition'>mkYesod</span> <span class='hs-str'>"GlobalVar"</span> <span class='hs-varop'>$</span><span class='hs-layout'>(</span><span class='hs-varid'>parseRoutesFile</span> <span class='hs-str'>"data-server-routes"</span><span class='hs-layout'>)</span>
+<a name="line-155"></a>
+<a name="line-156"></a><a name="instance%20Yesod%20GlobalVar"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Yesod</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-keyword'>where</span>
+<a name="line-157"></a>
+<a name="line-158"></a><span class='hs-comment'>------------------------------------------------</span>
+<a name="line-159"></a><span class='hs-comment'>-- Global Variable creation</span>
+<a name="line-160"></a>
+<a name="line-161"></a><a name="isNumber"></a><span class='hs-definition'>isNumber</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>String</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
+<a name="line-162"></a><span class='hs-comment'>{-# INLINE isNumber #-}</span>
+<a name="line-163"></a><span class='hs-definition'>isNumber</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>all</span> <span class='hs-varid'>isDigit</span>
+<a name="line-164"></a>
+<a name="line-165"></a><a name="mapFilterM"></a><span class='hs-comment'>-- | Map a function over a list and filter out the 'Nothing'</span>
+<a name="line-166"></a><span class='hs-comment'>--   values.</span>
+<a name="line-167"></a><span class='hs-definition'>mapFilterM</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Monad</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-layout'>(</span><span class='hs-conid'>Maybe</span> <span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>b</span><span class='hs-keyglyph'>]</span>
+<a name="line-168"></a><span class='hs-definition'>mapFilterM</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>go</span>
+<a name="line-169"></a>  <span class='hs-keyword'>where</span>
+<a name="line-170"></a>    <span class='hs-varid'>go</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-171"></a>      <span class='hs-varid'>my</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>f</span> <span class='hs-varid'>x</span>
+<a name="line-172"></a>      <span class='hs-varid'>ys</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>go</span> <span class='hs-varid'>xs</span>
+<a name="line-173"></a>      <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>my</span> <span class='hs-keyword'>of</span>
+<a name="line-174"></a>        <span class='hs-conid'>Just</span> <span class='hs-varid'>y</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>y</span> <span class='hs-conop'>:</span> <span class='hs-varid'>ys</span>
+<a name="line-175"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>ys</span>
+<a name="line-176"></a>    <span class='hs-varid'>go</span>  <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>return</span> <span class='hs-conid'>[]</span>
+<a name="line-177"></a>
+<a name="line-178"></a><a name="createGlobalVar"></a><span class='hs-definition'>createGlobalVar</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>AwayServer</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>GlobalVar</span>
+<a name="line-179"></a><span class='hs-definition'>createGlobalVar</span> <span class='hs-varid'>server</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-180"></a>  <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>doesDirectoryExist</span> <span class='hs-str'>"data"</span>
+<a name="line-181"></a>  <span class='hs-varid'>m</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-keyword'>if</span> <span class='hs-varid'>b</span> <span class='hs-keyword'>then</span> <span class='hs-varid'>generateLiveData</span> <span class='hs-keyword'>else</span> <span class='hs-varid'>return</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span>
+<a name="line-182"></a>  <span class='hs-varid'>v</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>newMVar</span> <span class='hs-varop'>$</span> <span class='hs-conid'>ServerState</span> 
+<a name="line-183"></a>    <span class='hs-layout'>{</span> <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>m</span>
+<a name="line-184"></a>    <span class='hs-layout'>,</span> <span class='hs-varid'>awayServer</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>server</span>
+<a name="line-185"></a>      <span class='hs-layout'>}</span>
+<a name="line-186"></a>  <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>GlobalVar</span> <span class='hs-varid'>v</span>
+<a name="line-187"></a>
+<a name="line-188"></a><a name="generateLiveData"></a><span class='hs-comment'>-- TODO: add comments to this function!</span>
+<a name="line-189"></a><span class='hs-definition'>generateLiveData</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IO</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span> <span class='hs-layout'>(</span><span class='hs-conid'>IntMap</span> <span class='hs-conid'>LiveValue</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-190"></a><span class='hs-definition'>generateLiveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-191"></a>  <span class='hs-varid'>xs</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getDirectoryContents</span> <span class='hs-str'>"data"</span>
+<a name="line-192"></a>  <span class='hs-keyword'>let</span> <span class='hs-varid'>pids</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fmap</span> <span class='hs-varid'>read</span> <span class='hs-varop'>$</span> <span class='hs-varid'>filter</span> <span class='hs-varid'>isNumber</span> <span class='hs-varid'>xs</span>
+<a name="line-193"></a>  <span class='hs-varid'>ps</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>mapM</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>pid</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-194"></a>                 <span class='hs-varid'>ys</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>getDirectoryContents</span> <span class='hs-varop'>$</span> <span class='hs-str'>"data/"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>pid</span>
+<a name="line-195"></a>                 <span class='hs-keyword'>let</span> <span class='hs-varid'>tsfps</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>filter</span> <span class='hs-varid'>isNumber</span> <span class='hs-varid'>ys</span>
+<a name="line-196"></a>                 <span class='hs-varid'>lvs</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>mapFilterM</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>tfp</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-197"></a>                                       <span class='hs-keyword'>let</span> <span class='hs-varid'>fp</span> <span class='hs-keyglyph'>=</span> <span class='hs-str'>"data/"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>pid</span> <span class='hs-varop'>++</span> <span class='hs-str'>"/"</span> <span class='hs-varop'>++</span> <span class='hs-varid'>tfp</span>
+<a name="line-198"></a>                                       <span class='hs-varid'>fl</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>readFile</span> <span class='hs-varid'>fp</span>
+<a name="line-199"></a>                                       <span class='hs-keyword'>case</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>decode</span> <span class='hs-varid'>fl</span> <span class='hs-keyword'>of</span>
+<a name="line-200"></a>                                         <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-201"></a>                                           <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"File ("</span> <span class='hs-varop'>++</span> <span class='hs-varid'>fp</span> <span class='hs-varop'>++</span> <span class='hs-str'>") does not contain "</span>
+<a name="line-202"></a>                                                   <span class='hs-varop'>++</span> <span class='hs-str'>"a valid binary store: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>err</span>
+<a name="line-203"></a>                                           <span class='hs-varid'>return</span> <span class='hs-conid'>Nothing</span>
+<a name="line-204"></a>                                         <span class='hs-conid'>Right</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>Just</span>
+<a name="line-205"></a>                                           <span class='hs-layout'>(</span> <span class='hs-varid'>read</span> <span class='hs-varid'>tfp</span>
+<a name="line-206"></a>                                           <span class='hs-layout'>,</span> <span class='hs-conid'>LiveValue</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>bsLength</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span>
+<a name="line-207"></a>                                                       <span class='hs-comment'>-- Now that we have read the file...</span>
+<a name="line-208"></a>                                                       <span class='hs-comment'>-- Why not keeping in memory what we</span>
+<a name="line-209"></a>                                                       <span class='hs-comment'>-- have read so far?</span>
+<a name="line-210"></a>                                                       <span class='hs-layout'>(</span><span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>readBinaryStore</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span>
+<a name="line-211"></a>                                                       <span class='hs-num'>0</span>
+<a name="line-212"></a>                                             <span class='hs-layout'>)</span>
+<a name="line-213"></a>                                      <span class='hs-layout'>)</span> <span class='hs-varid'>tsfps</span>
+<a name="line-214"></a>                 <span class='hs-varid'>return</span> <span class='hs-layout'>(</span><span class='hs-varid'>pid</span><span class='hs-layout'>,</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>fromList</span> <span class='hs-varid'>lvs</span><span class='hs-layout'>)</span>
+<a name="line-215"></a>                             <span class='hs-layout'>)</span> <span class='hs-varid'>pids</span>
+<a name="line-216"></a>  <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>fromList</span> <span class='hs-varid'>ps</span>
+<a name="line-217"></a>
+<a name="line-218"></a><span class='hs-comment'>------------------------------------------------</span>
+<a name="line-219"></a><span class='hs-comment'>-- Manipulating the state</span>
+<a name="line-220"></a>
+<a name="line-221"></a><a name="withVar"></a><span class='hs-comment'>-- | Perform an action using the global variable.</span>
+<a name="line-222"></a><span class='hs-definition'>withVar</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>MVar</span> <span class='hs-conid'>ServerState</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-varid'>a</span>
+<a name="line-223"></a><span class='hs-comment'>{-# INLINE withVar #-}</span>
+<a name="line-224"></a><span class='hs-definition'>withVar</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>getYesod</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>.</span> <span class='hs-varid'>f</span> <span class='hs-varop'>.</span> <span class='hs-varid'>unGlobalVar</span>
+<a name="line-225"></a>
+<a name="line-226"></a><a name="get"></a><span class='hs-comment'>-- | Read the current global state.</span>
+<a name="line-227"></a><span class='hs-definition'>get</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>ServerState</span>
+<a name="line-228"></a><span class='hs-comment'>{-# INLINE get #-}</span>
+<a name="line-229"></a><span class='hs-definition'>get</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>withVar</span> <span class='hs-varid'>readMVar</span>
+<a name="line-230"></a>
+<a name="line-231"></a><a name="modify"></a><span class='hs-comment'>-- | Modify the current state. The global state will</span>
+<a name="line-232"></a><span class='hs-comment'>--   be blocked from reading (see 'get') while this</span>
+<a name="line-233"></a><span class='hs-comment'>--   operation is performed.</span>
+<a name="line-234"></a><span class='hs-definition'>modify</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>ServerState</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ServerState</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
+<a name="line-235"></a><span class='hs-comment'>{-# INLINE modify #-}</span>
+<a name="line-236"></a><span class='hs-definition'>modify</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>withVar</span> <span class='hs-varop'>$</span> <span class='hs-keyglyph'>\</span><span class='hs-varid'>v</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>takeMVar</span> <span class='hs-varid'>v</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-varid'>putMVar</span> <span class='hs-varid'>v</span> <span class='hs-varop'>.</span> <span class='hs-varid'>f</span>
+<a name="line-237"></a>
+<a name="line-238"></a><span class='hs-comment'>{-
+<a name="line-239"></a>
+<a name="line-240"></a>Note that there is no 'put' operation in the Server monad.
+<a name="line-241"></a>This is because the underlying MVar is /always/ full (except
+<a name="line-242"></a>if it's in the middle of a 'modify' call). A 'put' operation
+<a name="line-243"></a>would therefore result in a block.
+<a name="line-244"></a>
+<a name="line-245"></a>-}</span>
+<a name="line-246"></a>
+<a name="line-247"></a><a name="addDecoded"></a><span class='hs-comment'>-- | Add 'DecodedData' to memory (global state).</span>
+<a name="line-248"></a><span class='hs-definition'>addDecoded</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
+<a name="line-249"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
+<a name="line-250"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Length index of decoded data at full resolution.</span>
+<a name="line-251"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-conid'>DecodedData</span> <span class='hs-comment'>-- ^ Decoded data.</span>
+<a name="line-252"></a>           <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
+<a name="line-253"></a><span class='hs-comment'>{-# INLINE addDecoded #-}</span>
+<a name="line-254"></a><span class='hs-definition'>addDecoded</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-varid'>l</span> <span class='hs-varid'>dd</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modify</span> <span class='hs-varop'>$</span>
+<a name="line-255"></a>  <span class='hs-keyglyph'>\</span><span class='hs-varid'>st</span> <span class='hs-keyglyph'>-&gt;</span>
+<a name="line-256"></a>     <span class='hs-keyword'>let</span> <span class='hs-varid'>lv</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>LiveValue</span> <span class='hs-varid'>l</span> <span class='hs-varid'>dd</span> <span class='hs-num'>0</span>
+<a name="line-257"></a>     <span class='hs-keyword'>in</span>  <span class='hs-varid'>st</span> <span class='hs-layout'>{</span> <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>alter</span>
+<a name="line-258"></a>                <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-keyword'>case</span>
+<a name="line-259"></a>                    <span class='hs-conid'>Just</span> <span class='hs-varid'>m</span>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>insert</span> <span class='hs-varid'>t</span> <span class='hs-varid'>lv</span> <span class='hs-varid'>m</span>
+<a name="line-260"></a>                    <span class='hs-keyword'>_</span>       <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Just</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-varid'>t</span> <span class='hs-varid'>lv</span>
+<a name="line-261"></a>                 <span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span> <span class='hs-layout'>}</span>
+<a name="line-262"></a>
+<a name="line-263"></a><a name="removeLiveValue"></a><span class='hs-comment'>-- | Remove a live value from memory.</span>
+<a name="line-264"></a><span class='hs-definition'>removeLiveValue</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
+<a name="line-265"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
+<a name="line-266"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
+<a name="line-267"></a><span class='hs-comment'>{-# INLINE removeLiveValue #-}</span>
+<a name="line-268"></a><span class='hs-definition'>removeLiveValue</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>modify</span> <span class='hs-varop'>$</span>
+<a name="line-269"></a>  <span class='hs-keyglyph'>\</span><span class='hs-varid'>st</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>st</span> <span class='hs-layout'>{</span> <span class='hs-varid'>liveData</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>alter</span> <span class='hs-layout'>(</span><span class='hs-varid'>fmap</span> <span class='hs-varop'>$</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>delete</span> <span class='hs-varid'>t</span><span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span> <span class='hs-layout'>}</span>
+<a name="line-270"></a>
+<a name="line-271"></a><span class='hs-comment'>------------------------------------------------</span>
+<a name="line-272"></a><span class='hs-comment'>-- Utils</span>
+<a name="line-273"></a>
+<a name="line-274"></a><a name="writeFilePlus"></a><span class='hs-comment'>-- | Write a file and any parent directories if needed.</span>
+<a name="line-275"></a><span class='hs-definition'>writeFilePlus</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>FilePath</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IO</span> <span class='hs-conid'>()</span>
+<a name="line-276"></a><span class='hs-definition'>writeFilePlus</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-277"></a>  <span class='hs-keyword'>let</span> <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>takeDirectory</span> <span class='hs-varid'>fp</span>
+<a name="line-278"></a>  <span class='hs-varid'>createDirectoryIfMissing</span> <span class='hs-conid'>True</span> <span class='hs-varid'>d</span>
+<a name="line-279"></a>  <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>writeFile</span> <span class='hs-varid'>fp</span> <span class='hs-varid'>bs</span>
+<a name="line-280"></a>
+<a name="line-281"></a><span class='hs-comment'>------------------------------------------------</span>
+<a name="line-282"></a><span class='hs-comment'>-- Requests</span>
+<a name="line-283"></a>
+<a name="line-284"></a><a name="binaryContent"></a><span class='hs-definition'>binaryContent</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>ByteString</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>TypedContent</span>
+<a name="line-285"></a><span class='hs-definition'>binaryContent</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>TypedContent</span> <span class='hs-str'>"binary/octet-stream"</span> <span class='hs-varop'>.</span> <span class='hs-varid'>toContent</span>
+<a name="line-286"></a>
+<a name="line-287"></a><a name="getTransferR"></a><span class='hs-comment'>-- | Send a chunk of data to the requester. It sends a 404 response</span>
+<a name="line-288"></a><span class='hs-comment'>--   if the chunk can't be found. If not found in the server, it</span>
+<a name="line-289"></a><span class='hs-comment'>--   will ask to the configured 'AwayServer'. The 404 response contains</span>
+<a name="line-290"></a><span class='hs-comment'>--   an error description in its body. Otherwise (200 response), the</span>
+<a name="line-291"></a><span class='hs-comment'>--   body contains the chunk in binary format.</span>
+<a name="line-292"></a><span class='hs-comment'>--</span>
+<a name="line-293"></a><span class='hs-comment'>--   When the transference is accomplished, the response might be</span>
+<a name="line-294"></a><span class='hs-comment'>--   delayed by some seconds. This is because the server must make</span>
+<a name="line-295"></a><span class='hs-comment'>--   sure that - in case that the chunk was retrieved from the away</span>
+<a name="line-296"></a><span class='hs-comment'>--   server - the chunk no longer stays stored at the away server,</span>
+<a name="line-297"></a><span class='hs-comment'>--   thus avoiding conflicting copies to roll around. If, after a fixed</span>
+<a name="line-298"></a><span class='hs-comment'>--   number of tries, the file from the away server is not deleted,</span>
+<a name="line-299"></a><span class='hs-comment'>--   this server will stop trying and will report an error. However,</span>
+<a name="line-300"></a><span class='hs-comment'>--   even if an error is reported, the transferred data will still</span>
+<a name="line-301"></a><span class='hs-comment'>--   be included in the response body. A 200 response means that everything</span>
+<a name="line-302"></a><span class='hs-comment'>--   worked as expected. A 500 response means that the deletion on the</span>
+<a name="line-303"></a><span class='hs-comment'>--   away server failed. The details will be prompted in the server,</span>
+<a name="line-304"></a><span class='hs-comment'>--   and the HTTP response will contain the error in a @X-Error@ header.</span>
+<a name="line-305"></a><span class='hs-comment'>--</span>
+<a name="line-306"></a><span class='hs-comment'>--   If a transference is done from an away server, but the data transferred</span>
+<a name="line-307"></a><span class='hs-comment'>--   was found corrupt, a 501 response will be sent, with the response body</span>
+<a name="line-308"></a><span class='hs-comment'>--   describing the error.</span>
+<a name="line-309"></a><span class='hs-definition'>getTransferR</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
+<a name="line-310"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
+<a name="line-311"></a>             <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>TypedContent</span>
+<a name="line-312"></a><span class='hs-definition'>getTransferR</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-313"></a>  <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>get</span>
+<a name="line-314"></a>  <span class='hs-keyword'>case</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>pid</span> <span class='hs-layout'>(</span><span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>t</span> <span class='hs-keyword'>of</span>
+<a name="line-315"></a>    <span class='hs-comment'>-- Chunk is not present in local disk</span>
+<a name="line-316"></a>    <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-317"></a>      <span class='hs-comment'>-- Ask away server</span>
+<a name="line-318"></a>      <span class='hs-varid'>transr</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>clientTransfer</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
+<a name="line-319"></a>      <span class='hs-keyword'>case</span> <span class='hs-varid'>transr</span> <span class='hs-keyword'>of</span>
+<a name="line-320"></a>        <span class='hs-comment'>-- Not found</span>
+<a name="line-321"></a>        <span class='hs-conid'>TransferNotFound</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>notFound404</span> <span class='hs-conid'>()</span>
+<a name="line-322"></a>        <span class='hs-comment'>-- Some error</span>
+<a name="line-323"></a>        <span class='hs-conid'>TransferError</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>internalServerError500</span> <span class='hs-varid'>err</span>
+<a name="line-324"></a>        <span class='hs-comment'>-- Found in away server!</span>
+<a name="line-325"></a>        <span class='hs-conid'>TransferFound</span> <span class='hs-varid'>b</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-326"></a>          <span class='hs-comment'>-- Check that it is well encoded (required to extract length).</span>
+<a name="line-327"></a>          <span class='hs-comment'>-- There is no problem about doing this since only the header</span>
+<a name="line-328"></a>          <span class='hs-comment'>-- needs to be read.</span>
+<a name="line-329"></a>          <span class='hs-keyword'>case</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>decode</span> <span class='hs-varid'>b</span> <span class='hs-keyword'>of</span>
+<a name="line-330"></a>            <span class='hs-comment'>-- Error decoding. This should NEVER happen. If it does...</span>
+<a name="line-331"></a>            <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-332"></a>              <span class='hs-comment'>-- Print error in server</span>
+<a name="line-333"></a>              <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"getTransferR: Error retrieving ("</span>
+<a name="line-334"></a>                               <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>
+<a name="line-335"></a>                               <span class='hs-varop'>++</span> <span class='hs-str'>") chunk: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>err</span>
+<a name="line-336"></a>              <span class='hs-comment'>-- Send 501 response with error in the body</span>
+<a name="line-337"></a>              <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>notImplemented501</span> <span class='hs-varid'>err</span>
+<a name="line-338"></a>            <span class='hs-conid'>Right</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-339"></a>              <span class='hs-comment'>-- Write it to local disk</span>
+<a name="line-340"></a>              <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>writeFilePlus</span> <span class='hs-layout'>(</span><span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span><span class='hs-layout'>)</span> <span class='hs-varid'>b</span>
+<a name="line-341"></a>              <span class='hs-comment'>-- Add it to memory</span>
+<a name="line-342"></a>              <span class='hs-varid'>addDecoded</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>bsLength</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span> <span class='hs-conid'>Nothing</span>
+<a name="line-343"></a>              <span class='hs-comment'>-- Once written, ask (please) to away server to</span>
+<a name="line-344"></a>              <span class='hs-comment'>-- remove it</span>
+<a name="line-345"></a>              <span class='hs-varid'>res</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>clientDeleteChunkPlease</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-num'>10</span>
+<a name="line-346"></a>              <span class='hs-keyword'>case</span> <span class='hs-varid'>res</span> <span class='hs-keyword'>of</span>
+<a name="line-347"></a>                <span class='hs-comment'>-- Send OK response with the binary content</span>
+<a name="line-348"></a>                <span class='hs-conid'>Right</span> <span class='hs-conid'>True</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
+<a name="line-349"></a>                <span class='hs-conid'>Right</span> <span class='hs-conid'>False</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-350"></a>                  <span class='hs-comment'>-- Print error in server</span>
+<a name="line-351"></a>                  <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"getTransferR: Could not delete chunk from "</span>
+<a name="line-352"></a>                                   <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>
+<a name="line-353"></a>                  <span class='hs-comment'>-- Send ERROR response with the binary content</span>
+<a name="line-354"></a>                  <span class='hs-varid'>addHeader</span> <span class='hs-str'>"X-Error"</span> <span class='hs-str'>"System error"</span>
+<a name="line-355"></a>                  <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>internalServerError500</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
+<a name="line-356"></a>                <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-357"></a>                  <span class='hs-comment'>-- Print error in server</span>
+<a name="line-358"></a>                  <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>putStrLn</span> <span class='hs-varop'>$</span> <span class='hs-str'>"getTransferR: Error deleting ("</span>
+<a name="line-359"></a>                                   <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span>
+<a name="line-360"></a>                                   <span class='hs-varop'>++</span> <span class='hs-str'>") chunk: "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>err</span>
+<a name="line-361"></a>                  <span class='hs-comment'>-- Send ERROR response with the binary content</span>
+<a name="line-362"></a>                  <span class='hs-varid'>addHeader</span> <span class='hs-str'>"X-Error"</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fromString</span> <span class='hs-varid'>err</span>
+<a name="line-363"></a>                  <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>internalServerError500</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
+<a name="line-364"></a>    <span class='hs-comment'>-- Chunk is in local disk!</span>
+<a name="line-365"></a>    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-366"></a>        <span class='hs-comment'>-- Just read the file...</span>
+<a name="line-367"></a>        <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-conid'>B</span><span class='hs-varop'>.</span><span class='hs-varid'>readFile</span> <span class='hs-varop'>$</span> <span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
+<a name="line-368"></a>        <span class='hs-comment'>-- ... and send it over :)</span>
+<a name="line-369"></a>        <span class='hs-varid'>sendResponse</span> <span class='hs-varop'>$</span> <span class='hs-varid'>binaryContent</span> <span class='hs-varid'>b</span>
+<a name="line-370"></a>
+<a name="line-371"></a><a name="putDeleteChunkR"></a><span class='hs-comment'>-- | Delete a chunk of data from the server, removing it</span>
+<a name="line-372"></a><span class='hs-comment'>--   from both memory and local disk. If it does not exist,</span>
+<a name="line-373"></a><span class='hs-comment'>--   this does nothing and reports success.</span>
+<a name="line-374"></a><span class='hs-definition'>putDeleteChunkR</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
+<a name="line-375"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
+<a name="line-376"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
+<a name="line-377"></a><span class='hs-definition'>putDeleteChunkR</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-378"></a>  <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>get</span>
+<a name="line-379"></a>  <span class='hs-keyword'>case</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>pid</span> <span class='hs-layout'>(</span><span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>t</span> <span class='hs-keyword'>of</span>
+<a name="line-380"></a>    <span class='hs-comment'>-- Chunk is in local disk</span>
+<a name="line-381"></a>    <span class='hs-conid'>Just</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-382"></a>      <span class='hs-comment'>-- Remove value from memory</span>
+<a name="line-383"></a>      <span class='hs-varid'>removeLiveValue</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
+<a name="line-384"></a>      <span class='hs-comment'>-- Delete file (catching any IOError)</span>
+<a name="line-385"></a>      <span class='hs-varid'>res</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>catchIOError</span>
+<a name="line-386"></a>               <span class='hs-layout'>(</span><span class='hs-keyword'>do</span> <span class='hs-keyword'>let</span> <span class='hs-varid'>fp</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span>
+<a name="line-387"></a>                   <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>doesFileExist</span> <span class='hs-varid'>fp</span>
+<a name="line-388"></a>                   <span class='hs-varid'>when</span> <span class='hs-varid'>b</span> <span class='hs-varop'>$</span> <span class='hs-varid'>removeFile</span> <span class='hs-varid'>fp</span>
+<a name="line-389"></a>                   <span class='hs-varid'>return</span> <span class='hs-conid'>Nothing</span><span class='hs-layout'>)</span>
+<a name="line-390"></a>               <span class='hs-layout'>(</span><span class='hs-varid'>return</span> <span class='hs-varop'>.</span> <span class='hs-conid'>Just</span><span class='hs-layout'>)</span>
+<a name="line-391"></a>      <span class='hs-keyword'>case</span> <span class='hs-varid'>res</span> <span class='hs-keyword'>of</span>
+<a name="line-392"></a>        <span class='hs-comment'>-- Error removing file! Report the error and let the</span>
+<a name="line-393"></a>        <span class='hs-comment'>-- client decide if it wants to try again.</span>
+<a name="line-394"></a>        <span class='hs-conid'>Just</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>serviceUnavailable503</span> <span class='hs-varop'>$</span> <span class='hs-varid'>show</span> <span class='hs-varid'>err</span>
+<a name="line-395"></a>        <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponse</span> <span class='hs-conid'>()</span>
+<a name="line-396"></a>    <span class='hs-comment'>-- Chunk is not present in local disk (nothing to do)</span>
+<a name="line-397"></a>    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponse</span> <span class='hs-conid'>()</span>
+<a name="line-398"></a>
+<a name="line-399"></a><a name="putInsertChunkR"></a><span class='hs-comment'>-- | Insert a chunk received from a client request. It returns a 400 response</span>
+<a name="line-400"></a><span class='hs-comment'>--   if the header of the chunk is malformed. In that case, the body of the</span>
+<a name="line-401"></a><span class='hs-comment'>--   response will contain the error. Otherwise, a 200 response is sent.</span>
+<a name="line-402"></a><span class='hs-definition'>putInsertChunkR</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
+<a name="line-403"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Initial time</span>
+<a name="line-404"></a>                <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>()</span>
+<a name="line-405"></a><span class='hs-definition'>putInsertChunkR</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-406"></a>  <span class='hs-varid'>b</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>waiRequest</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>.</span> <span class='hs-varid'>lazyRequestBody</span> <span class='hs-comment'>-- Network.Wai</span>
+<a name="line-407"></a>  <span class='hs-keyword'>case</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>decode</span> <span class='hs-varid'>b</span> <span class='hs-keyword'>of</span>
+<a name="line-408"></a>    <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>badRequest400</span> <span class='hs-varid'>err</span>
+<a name="line-409"></a>    <span class='hs-conid'>Right</span> <span class='hs-varid'>bs</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-410"></a>      <span class='hs-comment'>-- If the header is fine, write the file (this will consume the</span>
+<a name="line-411"></a>      <span class='hs-comment'>-- full bytestring)</span>
+<a name="line-412"></a>      <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>writeFilePlus</span> <span class='hs-layout'>(</span><span class='hs-varid'>generateFilePath</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span><span class='hs-layout'>)</span> <span class='hs-varid'>b</span>
+<a name="line-413"></a>      <span class='hs-comment'>-- Once is written, it is safe (and necessary) to add it to</span>
+<a name="line-414"></a>      <span class='hs-comment'>-- the memory.</span>
+<a name="line-415"></a>      <span class='hs-varid'>addDecoded</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t</span> <span class='hs-layout'>(</span><span class='hs-varid'>fromIntegral</span> <span class='hs-varop'>$</span> <span class='hs-conid'>BS</span><span class='hs-varop'>.</span><span class='hs-varid'>bsLength</span> <span class='hs-varid'>bs</span><span class='hs-layout'>)</span> <span class='hs-conid'>Nothing</span>
+<a name="line-416"></a>      <span class='hs-varid'>sendResponse</span> <span class='hs-conid'>()</span>
+<a name="line-417"></a>
+<a name="line-418"></a><a name="mergeSort"></a><span class='hs-comment'>-- | Take two ordered lists and return an ordered list with the elements</span>
+<a name="line-419"></a><span class='hs-comment'>--   of both lists.</span>
+<a name="line-420"></a><span class='hs-definition'>mergeSort</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
+<a name="line-421"></a><span class='hs-definition'>mergeSort</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>y</span><span class='hs-conop'>:</span><span class='hs-varid'>ys</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span>
+<a name="line-422"></a>  <span class='hs-keyword'>if</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&lt;=</span> <span class='hs-varid'>y</span> <span class='hs-keyword'>then</span> <span class='hs-varid'>x</span> <span class='hs-conop'>:</span> <span class='hs-varid'>mergeSort</span>    <span class='hs-varid'>xs</span> <span class='hs-layout'>(</span><span class='hs-varid'>y</span><span class='hs-conop'>:</span><span class='hs-varid'>ys</span><span class='hs-layout'>)</span>
+<a name="line-423"></a>            <span class='hs-keyword'>else</span> <span class='hs-varid'>y</span> <span class='hs-conop'>:</span> <span class='hs-varid'>mergeSort</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span>   <span class='hs-varid'>ys</span>
+<a name="line-424"></a><span class='hs-definition'>mergeSort</span> <span class='hs-conid'>[]</span> <span class='hs-varid'>ys</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>ys</span>
+<a name="line-425"></a><span class='hs-definition'>mergeSort</span> <span class='hs-varid'>xs</span>  <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>xs</span>
+<a name="line-426"></a>
+<a name="line-427"></a><a name="getRangeKeysR"></a><span class='hs-definition'>getRangeKeysR</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ PID</span>
+<a name="line-428"></a>              <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Range left end</span>
+<a name="line-429"></a>              <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-comment'>-- ^ Range right end</span>
+<a name="line-430"></a>              <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Handler</span> <span class='hs-conid'>Value</span> <span class='hs-comment'>-- ^ @Value :: [Int]@</span>
+<a name="line-431"></a><span class='hs-definition'>getRangeKeysR</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t1</span> <span class='hs-varid'>t2</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>do</span>
+<a name="line-432"></a>  <span class='hs-varid'>st</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>get</span>
+<a name="line-433"></a>  <span class='hs-varid'>eawayKeys</span> <span class='hs-keyglyph'>&lt;-</span> <span class='hs-varid'>liftIO</span> <span class='hs-varop'>$</span> <span class='hs-varid'>clientRangeKeys</span> <span class='hs-layout'>(</span><span class='hs-varid'>awayServer</span> <span class='hs-varid'>st</span><span class='hs-layout'>)</span> <span class='hs-varid'>pid</span> <span class='hs-varid'>t1</span> <span class='hs-varid'>t2</span>
+<a name="line-434"></a>  <span class='hs-keyword'>case</span> <span class='hs-varid'>eawayKeys</span> <span class='hs-keyword'>of</span>
+<a name="line-435"></a>    <span class='hs-conid'>Left</span> <span class='hs-varid'>err</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>sendResponseStatus</span> <span class='hs-varid'>internalServerError500</span> <span class='hs-varid'>err</span>
+<a name="line-436"></a>    <span class='hs-conid'>Right</span> <span class='hs-varid'>awayKeys</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>do</span>
+<a name="line-437"></a>      <span class='hs-keyword'>let</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookup</span> <span class='hs-varid'>pid</span> <span class='hs-varop'>$</span> <span class='hs-varid'>liveData</span> <span class='hs-varid'>st</span>
+<a name="line-438"></a>          <span class='hs-varid'>keys</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>maybe</span> <span class='hs-conid'>[]</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>keys</span> <span class='hs-varid'>m</span>
+<a name="line-439"></a>      <span class='hs-keyword'>case</span> <span class='hs-varid'>m</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookupLE</span> <span class='hs-varid'>t1</span> <span class='hs-keyword'>of</span>
+<a name="line-440"></a>        <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>toJSON</span> <span class='hs-layout'>(</span><span class='hs-conid'>[]</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>)</span>
+<a name="line-441"></a>        <span class='hs-conid'>Just</span> <span class='hs-layout'>(</span><span class='hs-varid'>lt</span><span class='hs-layout'>,</span><span class='hs-varid'>lv</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span>
+<a name="line-442"></a>          <span class='hs-keyword'>if</span> <span class='hs-varid'>t1</span> <span class='hs-varop'>&lt;=</span> <span class='hs-varid'>lt</span> <span class='hs-varop'>+</span> <span class='hs-num'>2</span> <span class='hs-varop'>^</span> <span class='hs-varid'>lvLength</span> <span class='hs-varid'>lv</span> <span class='hs-comment'>-</span> <span class='hs-num'>1</span>
+<a name="line-443"></a>             <span class='hs-comment'>-- The time t1 is contained in the chunk with</span>
+<a name="line-444"></a>             <span class='hs-comment'>-- initial time lt</span>
+<a name="line-445"></a>             <span class='hs-keyword'>then</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>m</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookupLE</span> <span class='hs-varid'>t2</span> <span class='hs-keyword'>of</span>
+<a name="line-446"></a>                    <span class='hs-comment'>-- There are values in the server before t2</span>
+<a name="line-447"></a>                    <span class='hs-conid'>Just</span> <span class='hs-layout'>(</span><span class='hs-varid'>rt</span><span class='hs-layout'>,</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span>
+<a name="line-448"></a>                      <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>toJSON</span>
+<a name="line-449"></a>                               <span class='hs-comment'>-- Mergesort away keys</span>
+<a name="line-450"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>mergeSort</span> <span class='hs-varid'>awayKeys</span>
+<a name="line-451"></a>                               <span class='hs-comment'>-- Take keys until rt (included)</span>
+<a name="line-452"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>&lt;=</span> <span class='hs-varid'>rt</span><span class='hs-layout'>)</span>
+<a name="line-453"></a>                               <span class='hs-comment'>-- Drop keys before lt </span>
+<a name="line-454"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>dropWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>&lt;</span>  <span class='hs-varid'>lt</span><span class='hs-layout'>)</span> <span class='hs-varid'>keys</span>
+<a name="line-455"></a>                    <span class='hs-comment'>-- There are no values in the server before t2</span>
+<a name="line-456"></a>                    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span>
+<a name="line-457"></a>                      <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>toJSON</span>
+<a name="line-458"></a>                               <span class='hs-comment'>-- Mergesort away keys</span>
+<a name="line-459"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>mergeSort</span> <span class='hs-varid'>awayKeys</span>
+<a name="line-460"></a>                               <span class='hs-comment'>-- Drop keys before lt</span>
+<a name="line-461"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>dropWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>&lt;</span> <span class='hs-varid'>lt</span><span class='hs-layout'>)</span> <span class='hs-varid'>keys</span>
+<a name="line-462"></a>             <span class='hs-comment'>-- The time t1 is NOT contained in the chunk with</span>
+<a name="line-463"></a>             <span class='hs-comment'>-- initial time lt. Therefore, t1 is not in this server.</span>
+<a name="line-464"></a>             <span class='hs-keyword'>else</span> <span class='hs-keyword'>case</span> <span class='hs-varid'>m</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-conid'>LM</span><span class='hs-varop'>.</span><span class='hs-varid'>lookupLE</span> <span class='hs-varid'>t2</span> <span class='hs-keyword'>of</span>
+<a name="line-465"></a>                    <span class='hs-comment'>-- There are values in the server before t2</span>
+<a name="line-466"></a>                    <span class='hs-conid'>Just</span> <span class='hs-layout'>(</span><span class='hs-varid'>rt</span><span class='hs-layout'>,</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span>
+<a name="line-467"></a>                      <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>toJSON</span>
+<a name="line-468"></a>                               <span class='hs-comment'>-- Mergesort away keys</span>
+<a name="line-469"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>mergeSort</span> <span class='hs-varid'>awayKeys</span>
+<a name="line-470"></a>                               <span class='hs-comment'>-- Take keys until rt (included)</span>
+<a name="line-471"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>takeWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>&lt;=</span> <span class='hs-varid'>rt</span><span class='hs-layout'>)</span>
+<a name="line-472"></a>                               <span class='hs-comment'>-- Drop keys before lt (included)</span>
+<a name="line-473"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>dropWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>&lt;=</span> <span class='hs-varid'>lt</span><span class='hs-layout'>)</span> <span class='hs-varid'>keys</span>
+<a name="line-474"></a>                    <span class='hs-comment'>-- There are no values in the server before t2</span>
+<a name="line-475"></a>                    <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span>
+<a name="line-476"></a>                      <span class='hs-varid'>return</span> <span class='hs-varop'>$</span> <span class='hs-varid'>toJSON</span>
+<a name="line-477"></a>                               <span class='hs-comment'>-- Mergesort away keys</span>
+<a name="line-478"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>mergeSort</span> <span class='hs-varid'>awayKeys</span>
+<a name="line-479"></a>                               <span class='hs-comment'>-- Drop keys before lt (included)</span>
+<a name="line-480"></a>                             <span class='hs-varop'>$</span> <span class='hs-varid'>dropWhile</span> <span class='hs-layout'>(</span><span class='hs-varop'>&lt;=</span> <span class='hs-varid'>lt</span><span class='hs-layout'>)</span> <span class='hs-varid'>keys</span>
 </pre></body>
 </html>
