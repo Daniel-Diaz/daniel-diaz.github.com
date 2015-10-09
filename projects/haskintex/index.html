@@ -363,6 +363,14 @@ Alternatively, use the <code>memo</code> flag and apply the <code>notmemo</code>
 to those expressions whose value may change over time.
 </p>
 
+<h1>Sandboxes</h1>
+
+<p>
+If <i>haskintex</i> is running inside a cabal sandbox environment, it will use the sandbox
+package db when evaluating Haskell code. If you don't want this to happen, use the
+<code>-nosandbox</code> flag and the sandbox package db will be ignored.
+</p>
+
 <h1>Flag reference</h1>
 
 <p>
@@ -410,6 +418,10 @@ or <code>iohatex</code> command (or environment) will be called with the <code>m
 <li><code>memoclean</code>: Cleans the memo tree after the execution of <i>haskintex</i>. If
 several files are processed, the memo tree will be cleaned <i>after</i> processing all of
 them. Read more about the memo tree in the <i>Memorization</i> section.
+</li>
+
+<li><code>nosandbox</code>: Do not use the sandbox package db even if <i>haskintex</i> is running
+in one.
 </li>
 
 <li><code>overwrite</code>: Overwrite the output file if it already exists. If this flag
