@@ -367,6 +367,13 @@ process the file <code>foo.htex</code> verbosely: <code>haskintex foo -verbose</
 </p>
 
 <ul>
+<li><code>autotexy</code>: Apply the function <code>texy</code> from the
+<a href="http://hackage.haskell.org/package/HaTeX/docs/Text-LaTeX-Base-Texy.html">Text.LaTeX.Base.Texy</a>
+module of the HaTeX package to every expression in a <code>hatex</code> or <code>iohatex</code>
+command. This effectively allows the user to write expressions in types other than <code>LaTeX</code>
+and have <i>haskintex</i> to perform the required transformation.
+</li>
+
 <li><code>debug</code>: Only for debugging purposes. It writes a file with extension .debughtex with the
 AST of the internal representation of the input file <i>haskintex</i> uses.
 </li>
