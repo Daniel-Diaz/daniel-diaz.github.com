@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
-<html><head><title>The HaTeX User&#39;s Guide</title><link rel="stylesheet" href="https://rawgithub.com/Daniel-Diaz/hatex-guide/master/hatex.css"></head><body><h1 class="title">The HaTeX User&#39;s Guide</h1><p class="centered"><i>Version 1.3.1.0 using <a href="http://hackage.haskell.org/package/blaze-html">blaze-html</a>.</i></p><p class="centered"><i>Generated on 2014-05-16.</i></p><p class="centered">Daniel Díaz</p><hr><h1>Table of contents</h1><br><a href="#s1">1. Preface</a><br>.......... <a href="#s1.1">1.1. Introduction</a><br>.......... <a href="#s1.2">1.2. What is HaTeX?</a><br><a href="#s2">2. Basics</a><br>.......... <a href="#s2.1">2.1. The Monoid class</a><br>.......... <a href="#s2.2">2.2. LaTeX blocks</a><br>.......... <a href="#s2.3">2.3. Creating blocks</a><br>.................... <a href="#s2.3.1">2.3.1. From strings</a><br>.................... <a href="#s2.3.2">2.3.2. More blocks</a><br>.......... <a href="#s2.4">2.4. Putting blocks together</a><br>.......... <a href="#s2.5">2.5. Rendering</a><br>.......... <a href="#s2.6">2.6. Try yourself</a><br><a href="#s3">3. LaTeX blocks and the Writer monad</a><br>.......... <a href="#s3.1">3.1. The Writer Monad</a><br>.......... <a href="#s3.2">3.2. The LaTeX Monad</a><br>.......... <a href="#s3.3">3.3. Composing monads</a><br><a href="#s4">4. The LaTeXC class</a><br><a href="#s5">5. Packages</a><br>.......... <a href="#s5.1">5.1. Inputenc</a><br>.......... <a href="#s5.2">5.2. Graphicx</a><br><a href="#s6">6. Epilogue</a><br>.......... <a href="#s6.1">6.1. Notes about this guide</a><br>.......... <a href="#s6.2">6.2. Notes from the author</a><br><a href="#footnotes">Footnotes</a><hr><h1><a id="s1">1. Preface</a></h1>
+<html><head><title>The HaTeX User&#39;s Guide</title><link rel="stylesheet" href="https://rawgithub.com/Daniel-Diaz/hatex-guide/master/hatex.css"></head><body><h1 class="title">The HaTeX User&#39;s Guide</h1><p class="centered"><i>Version 1.3.1.2 using <a href="http://hackage.haskell.org/package/blaze-html">blaze-html</a>.</i></p><p class="centered"><i>Generated on 2016-05-21.</i></p><p class="centered">Daniel Díaz, GetContented</p><hr><h1>Table of contents</h1><br><a href="#s1">1. Preface</a><br>.......... <a href="#s1.1">1.1. Introduction</a><br>.......... <a href="#s1.2">1.2. What is HaTeX?</a><br><a href="#s2">2. Basics</a><br>.......... <a href="#s2.1">2.1. The Monoid class</a><br>.......... <a href="#s2.2">2.2. LaTeX blocks</a><br>.......... <a href="#s2.3">2.3. Creating blocks</a><br>.................... <a href="#s2.3.1">2.3.1. From strings</a><br>.................... <a href="#s2.3.2">2.3.2. More blocks</a><br>.......... <a href="#s2.4">2.4. Putting blocks together</a><br>.......... <a href="#s2.5">2.5. Rendering</a><br>.......... <a href="#s2.6">2.6. Try it yourself</a><br><a href="#s3">3. LaTeX blocks and the Writer monad</a><br>.......... <a href="#s3.1">3.1. The Writer Monad</a><br>.......... <a href="#s3.2">3.2. The LaTeX Monad</a><br>.......... <a href="#s3.3">3.3. Composing monads</a><br><a href="#s4">4. The LaTeXC class</a><br><a href="#s5">5. Packages</a><br>.......... <a href="#s5.1">5.1. Inputenc</a><br>.......... <a href="#s5.2">5.2. Graphicx</a><br><a href="#s6">6. Epilogue</a><br>.......... <a href="#s6.1">6.1. Notes about this guide</a><br>.......... <a href="#s6.2">6.2. Notes from the author</a><br><a href="#footnotes">Footnotes</a><hr><h1><a id="s1">1. Preface</a></h1>
 
 <h2><a id="s1.1">1.1. Introduction</a></h2>
 
 <p>If you are here to learn more about <i>HaTeX</i>, or are just curious, you are in the
 right place. First of all, note that this guide is aimed at those who already
 know the basics of both Haskell and <i>LaTeX</i>. If you don&#39;t, first try to learn
-a bit of each (both are quite useful). To learn Haskell, start with some
+some of each (both are quite useful). To learn Haskell, start with some
 tutorials and suggestions at the excellent Haskell website
 [<a href="http://haskell.org">http://haskell.org</a>]. To
 learn <i>LaTeX</i>, start with <i>The not so short introduction to <i>LaTeX</i></i>
@@ -14,29 +14,29 @@ learn <i>LaTeX</i>, start with <i>The not so short introduction to <i>LaTeX</i><
 
 <p>The <i>HaTeX</i> library aspires to be the tool with which Haskellers want to
 construct their <i>LaTeX</i> documents while working within their beloved language.
-<i>HaTeX</i> tries to be as comprehensive and well constructed as possible.
-Do you still think that something could be better? Is something lacking,
-perhaps? Then go to the <i>HaTeX</i> mailing list
+<i>HaTeX</i> tries to be as comprehensive and well-constructed as possible.
+Do you still think something could be better? Is something lacking,
+perhaps? If so, go to the <i>HaTeX</i> mailing list
 [<a href="http://projects.haskell.org/cgi-bin/mailman/listinfo/hatex">http://projects.haskell.org/cgi-bin/mailman/listinfo/hatex</a>]
 and complain without mercy! Or, if you are a GitHub user, create an issue
-[<a href="https://github.com/Daniel-Diaz/HaTeX/issues">https://github.com/Daniel-Diaz/HaTeX/issues</a>] or, to be awesome,
+[<a href="https://github.com/Daniel-Diaz/HaTeX/issues">https://github.com/Daniel-Diaz/HaTeX/issues</a>] or, to be even more awesome,
 create a patch and send a pull request. This is one of the great things about
 open source projects!</p>
 
 <h2><a id="s1.2">1.2. What is HaTeX?</a></h2>
 
-<p>Before explaining <i>how</i> <i>HaTeX</i> works, it is convenient to state <i>what</i> <i>HaTeX</i>
+<p>Before explaining <i>how</i> <i>HaTeX</i> works, let&#39;s state <i>what</i> <i>HaTeX</i>
 actually is.</p>
 
 <p><i><i>HaTeX</i> is a Haskell library that provides functions to create, manipulate and
 parse <i>LaTeX</i> code.</i></p>
 
 <p>People often say that <i><i>HaTeX</i> is a <i>LaTeX</i> DSL</i>, or Domain Specific Language.
-With it you can enjoy all the many advantages of Haskell while creating <i>LaTeX</i>
+With it, you can enjoy all the many advantages of Haskell while creating <i>LaTeX</i>
 documents. A common use is the
 automatic creation of such documents, perhaps from a Haskell data source.
-A more exotic one is to render chessboard situations. Possibilities are limited
-only by the imagination. The goal is this: if you can do it with <i>LaTeX</i>, you can
+A more exotic one would be to render chessboard situations. Possibilities are limited
+only by the imagination. The goal is: if you can do it with <i>LaTeX</i>, you can
 do it with <i>HaTeX</i>,
 while taking advantage of all that Haskell offers.
 </p>
@@ -49,13 +49,14 @@ while taking advantage of all that Haskell offers.
 
 <p>If you are already familiar with the <code>Monoid</code> class, jump to the next point.
 The <code>Monoid</code> class is something that you must get used to in Haskell. But don&#39;t worry, it is quite simple
-(in spite of the similarity in the name with the <code>Monad</code> class).
-A <i>monoid</i> in Mathematics is an algebraic structure consisting of a set of objects with
-an operation between them, being this operation <i>associative</i> and with a <i>neutral element</i>.
+(despite having a similar name to the <code>Monad</code> class).
+A <i>monoid</i> in Mathematics is an algebraic structure consisting of a set of objects, 
+an <i>associative</i> operation and a <i>neutral element</i>.
 Phew! But what is the meaning of this? By <i>associative</i> we mean that, if you have three elements
-<i>a</i>, <i>b</i> and <i>c</i>, then <i>a*(b*c) = (a*b)*c</i>. A <i>neutral element</i> is the one that does not worth to operate with,
-because it does nothing! To say, <i>e</i> is a <i>neutral element</i> if <i>e*a=a*e=a</i>, given any object <i>a</i>.
-As an example, you may take the <i>real numbers</i> as objects and the ordinary multiplication as operation.</p>
+<i>a</i>, <i>b</i> and <i>c</i>, then <i>a*(b*c) = (a*b)*c</i>. A <i>neutral element</i> is one that does not change other values when operated with,
+because it means nothing with respect to the operation! To say, <i>e</i> is a <i>neutral element</i> if <i>e*a=a*e=a</i>, given any object <i>a</i>.
+As an example, you may take the <i>real numbers</i> as objects and the ordinary multiplication as operation, in which case
+the <i>neutral element</i> would be the number one.</p>
 
 <p>Now that you know the math basics behind the <code>Monoid</code> class, let&#39;s see its definition:</p>
 
@@ -67,8 +68,8 @@ class Monoid m where
 </pre>
 
 <p>See that <code>mappend</code> corresponds to the monoid operation and <code>mempty</code> to its neutral element.
-The names of the methods may seem insuitable, but they correspond to an example of monoid:
-the lists with the appending <code>(++)</code> operation. Who is the neutral element here? The empty list:</p>
+The names of the methods may seem unsuitable, but they correspond to a particular case of monoid:
+the lists with the appending <code>(++)</code> operation. What is the neutral element here? The empty list:</p>
 
 <pre>
 xs ++ [] = [] ++ xs = xs
@@ -86,23 +87,23 @@ We can say that <code>a</code> is a <code>LaTeX</code> <b>block</b>. What happen
 two <code>LaTeX</code> blocks? As both are well-formed, so is the result. Thus, two blocks appended form
 another block. This way, we can define an operation over the <code>LaTeX</code> blocks. If we consider that
 a totally empty code is a well-formed piece of <i>LaTeX</i> code, we can speak about the empty block.
-And, as the reader may notice, these blocks with its appending form a monoid. Namely, <code>LaTeX</code>
-can be done an instance of the <code>Monoid</code> class.</p>
+And, as the reader may notice, these blocks with the append operation form a monoid. Namely, <code>LaTeX</code>
+is an instance of the <code>Monoid</code> class.</p>
 
-<p>Of course, our mission using <i>HaTeX</i> is to create a <code>LaTeX</code> block that fits our purpose. The
-way to achieve this is to create a multitude of <code>LaTeX</code> blocks and, then, use the <code>Monoid</code> operation
-to collapse them all in a single block.</p>
+<p>Of course, our objective when using <i>HaTeX</i> is to create a <code>LaTeX</code> block that fits our purpose. The
+way to achieve this is to create a multitude of <code>LaTeX</code> blocks and use the <code>Monoid</code> operation
+to collapse them into a single block.</p>
 
 <h2><a id="s2.3">2.3. Creating blocks</a></h2>
 
-<p>We have now a universe of blocks forming a monoid. What we need now is a way to create these blocks.
+<p>We now have a universe of blocks that form a monoid. What we need is a way to create these blocks.
 As we said, a block is the representation of a well-formed piece of <i>LaTeX</i> code. Let <code>a</code> be the
 block of the <i>LaTeX</i> expression <code>\delta{}</code><a href="#f2">[2]</a>.
 Since this is a constant expression, it has a constant value in Haskell, named <code>delta</code>. Calling
 this value will generate the desired block.</p>
 
 <p>Other <i>LaTeX</i> expressions depend on a given argument. For example <code>\linespread{x}</code>, where <code>x</code> is
-a number. How we deal with this? As you expect, with functions. We can create blocks that depend on
+a number. How do we use these? As you would expect, with functions. We can create blocks that depend on
 values with functions that take these values as arguments, where these arguments can be
 blocks as well. For instance, we have the function <code>linespread</code> with type:</p>
 
@@ -110,19 +111,19 @@ blocks as well. For instance, we have the function <code>linespread</code> with 
 linespread :: Float -> LaTeX
 </pre>
 
-<p>As you may know, a title in <i>LaTeX</i> can contain itself <i>LaTeX</i> code. So the type for the Haskell
+<p>As you may know, a title in <i>LaTeX</i> can itself contain <i>LaTeX</i> code. So the type for the Haskell
 function <code>title</code> is:</p>
 
 <pre>
 title :: LaTeX -> LaTeX
 </pre>
 
-<p>And this is, essentialy, the way to work with <i>HaTeX</i>: <b>to create blocks and combine them</b>.
-Once you have your final block ready, you will be able to create its corresponding <i>LaTeX</i> code
-(we will see how later). Note that for every block there is a <i>LaTeX</i> code, but not for every code
-there is a block, because a malformed (in the sense of the negation of our well-formed concept) code
-has <b>not</b> a block in correspondence.
-This fact has a practical consequence: <b>we cannot create malformed <i>LaTeX</i> code</b>. <i>And that&#39;s a good deal!</i></p>
+<p>And this is essentialy the way we work with <i>HaTeX</i>: <b>to create blocks and combine them</b>.
+Once you have your final block ready, you will be able to create the <i>LaTeX</i> code that corresponds to it
+(we will see how later). Note that there is <i>LaTeX</i> code for every block, but not every piece of <i>LaTeX</i>
+has a block, because a malformed (in the sense of the negation of our well-formed concept) code
+doe <b>not</b> have a corresponding block.
+This fact has a practical consequence: <b>we cannot create malformed <i>LaTeX</i> code</b> using <i>HaTeX</i>. <i>And that&#39;s a good thing!</i></p>
 
 <h3><a id="s2.3.1">2.3.1. From strings</a></h3>
 
@@ -135,38 +136,38 @@ class IsString a where
 </pre>
 
 <p>Since there is a set of characters reserved	to create commands or another constructions,
-<i>HaTeX</i> takes care and avoids them replacing each reserved character with a command which
-output looks like the original character. For example, the backslash <code>\</code> is replaced with
+<i>HaTeX</i> takes care to avoid using them, replacing each with a command whose
+output looks like the originally intended character. For example, the backslash <code>\</code> is replaced with
 the <code>\backslash{}</code> command.</p>
 
-<p>The function that avoids reserved characteres is exported with the name <code>protectString</code>.
+<p>The function that avoids reserved characters is exported with the name <code>protectString</code>.
 Also, there is a variant for <code>Text</code> values called <code>protectText</code>.</p>
 
 <p>The use of the <code>IsString</code> class is because the <i>Overloaded Strings</i> extension.
-This one is similar to the <i>Overloaded Numbers</i> Haskell feature, which translates the number
+This is similar to the <i>Overloaded Numbers</i> Haskell feature, which translates the number
 <code>4</code> to <code>fromInteger 4</code>. In a similar way, with <code>OverloadedStrings</code> enabled, the string
 <code>"foo"</code> is translated to <code>fromString "foo"</code>. If we now apply this to our blocks,
 the string <code>"foo"</code> will be automatically translated to a <code>latex</code> block with <i>foo</i> as content.
-Quite handy! We will assume the <code>OverloadedStrings</code> extension enabled from now.</p>
+Quite handy! We will assume that the <code>OverloadedStrings</code> extension is enabled from now on.</p>
 
 <h3><a id="s2.3.2">2.3.2. More blocks</a></h3>
 
-<p>There is a lot of functions for create blocks. In fact, we can say that this is the main purpose
-of the library. <i>LaTeX</i> has a lot of commands, in order to set font attributes, create tables,
-insert graphics, include mathematical symbols, etc. So <i>HaTeX</i> have a function for each command
-defined in <i>LaTeX</i> (to tell the truth, only for a small subset). Please, go to the API documentation
-to read about particular functions. Build it locally or find it in Hackage: <a href="http://hackage.haskell.org/package/HaTeX">http://hackage.haskell.org/package/HaTeX</a>.
+<p>There are a lot of functions to create blocks. In fact, we can say this is the primary purpose
+of the library. <i>LaTeX</i> has a lot of commands: they can set font attributes, create tables,
+insert graphics, include mathematical symbols, etc. So <i>HaTeX</i> has a function for each command
+defined in <i>LaTeX</i> (to tell the truth, only for a small subset). Please go to the API documentation
+to read about particular functions - you can either build it locally or find it on Hackage: 
+<a href="http://hackage.haskell.org/package/HaTeX">http://hackage.haskell.org/package/HaTeX</a>.
 You will find the class constraint <code>LaTeXC l</code> in every entity. <code>LaTeX</code> is an instance of this
-class, so you can assume that <code>l</code> is the <code>LaTeX</code> datatype without any problem. More about
-this in section about the <code>LaTeXC</code> class.</p>
+class, so you can think of <code>l</code> as the <code>LaTeX</code> datatype without any problem. There is more about
+this in the section about the <code>LaTeXC</code> class.</p>
 
 <h2><a id="s2.4">2.4. Putting blocks together</a></h2>
 
-<p>Once you have the blocks, as we said before, you need to append them. The <code>mappend</code>
-method of the <code>Monoid</code> class does this work. If <code>a</code> and <code>b</code> are two blocks,
-<code>mappend a b</code>, or <code>a `mappend` b</code>, or even <code>a <> b</code><a href="#f3">[3]</a>, is the block with
-<code>a</code> and <code>b</code> juxtaposed. For long lists of blocks, you can try it with <code>mconcat</code>
-as follows:</p>
+<p>Once you have your blocks, as we said before, you need to join them. The <code>mappend</code>
+method of the <code>Monoid</code> class will do this. If <code>a</code> and <code>b</code> are two blocks,
+<code>mappend a b</code>, or <code>a `mappend` b</code>, or even <code>a <> b</code><a href="#f3">[3]</a>, return the juxtaposition of <code>a</code> and <code>b</code>. 
+For lists of blocks, you can use <code>mconcat</code> instead as follows:</p>
 
 <pre>
 mconcat [ "I can see a "  , textbf "rainbow"
@@ -176,10 +177,10 @@ mconcat [ "I can see a "  , textbf "rainbow"
 <h2><a id="s2.5">2.5. Rendering</a></h2>
 
 <p>This is the last step in our <i>LaTeX</i> document creation. When we have our final
-<i>LaTeX</i> block <code>a</code>, the function <code>renderFile</code> can output it into a file, in
+<i>LaTeX</i> block <code>a</code>, the function <code>renderFile</code> can output it to a file, in
 the form of its correspondent <i>LaTeX</i> code.</p>
 
-<p>Say we have the next definition:</p>
+<p>Say we have this definition:</p>
 
 <pre>
 short =
@@ -189,7 +190,7 @@ short =
  <> document (maketitle <> "This is all.")
 </pre>
 
-<p>Then, after calling <code>renderFile "short.tex" short</code>, the following file appears
+<p>Then, after calling <code>renderFile "short.tex" short</code>, the following file will appear
 in the current working directory (line breaks added for easier visualization):</p>
 
 <pre>
@@ -202,8 +203,8 @@ This is all
 \end{document}
 </pre>
 
-<p>Finally, you may use commands like <code>latex</code> or <code>pdflatex</code> to compile the <i>LaTeX</i>
-output to dvi or pdf.</p>
+<p>Finally, you may use commands like <code>latex</code> or <code>pdflatex</code> in your command line environment
+to compile the <i>LaTeX</i> output to dvi or pdf.</p>
 
 <p>The function <code>renderFile</code> is not only for <code>LaTeX</code> values. Let&#39;s see its type:</p>
 
@@ -211,7 +212,7 @@ output to dvi or pdf.</p>
 renderFile :: Render a => FilePath -> a -> IO ()
 </pre>
 
-<p>The <code>Render</code> class that appears in the context is defined:</p>
+<p>The <code>Render</code> class that appears in the context is defined as:</p>
 
 <pre>
 class Render a where
@@ -219,34 +220,35 @@ class Render a where
 </pre>
 
 <p>So, it is the class of types that can be rendered to a <code>Text</code> value. The
-type <code>LaTeX</code> is an instance, but other types, like <code>Int</code> or <code>Float</code>, so are too.
+type <code>LaTeX</code> is an instance, but other types, like <code>Int</code> or <code>Float</code>, are too.
 These instances are useful for creating blocks from other values. With the function
 <code>rendertex</code>, any value in the <code>Render</code> class can be transformed to a block. First,
-the value is converted to <code>Text</code>, and then to <code>LaTeX</code> the same way we did with strings.
-But, <b>be careful!</b> Because <code>rendertex</code> does <b>not</b> escape reserved characters.</p>
+the value is converted to <code>Text</code>, and then to <code>LaTeX</code> in the same way as we did with strings.
+But, <b>be careful</b> because <code>rendertex</code> does <b>not</b> escape reserved characters.</p>
 
-<h2><a id="s2.6">2.6. Try yourself</a></h2>
+<h2><a id="s2.6">2.6. Try it yourself</a></h2>
 
-<p>As always, the best way to learn something well is to try it by yourself.
-Since to see code examples can give you a great help, <i>HaTeX</i> comes with several
-examples where you can see by yourself how to get the work done.</p>
+<p>As always, the best way to learn something well is to try it for yourself.
+Since looking at code examples can help you greatly, <i>HaTeX</i> comes with several
+examples at [<a href="https://github.com/Daniel-Diaz/HaTeX/tree/master/Examples">https://github.com/Daniel-Diaz/HaTeX/tree/master/Examples</a>] so 
+you can see for yourself how to accomplish various tasks.</p>
 
-<p>The API reference is also a good point to keep in mind. Descriptions of functions
-make you know how exactly they works. And, when they are not present, function names
-with type signatures may be very helpful and descriptive.
+<p>The API reference is also a good reference to keep in mind. Descriptions of functions
+allow you to know exactly how they work. Even when these are not present, just the
+function names and their type signatures can be very helpful and descriptive.
 </p>
 
 <h1><a id="s3">3. LaTeX blocks and the Writer monad</a></h1>
 
 <h2><a id="s3.1">3.1. The Writer Monad</a></h2>
-<p>Fixed a monoid <code>M</code>, the <code>M</code>-writer monad is just all possible pairs of elements from <code>M</code>
+<p>For any given monoid, <code>M</code>, the <code>M</code>-writer monad is just all possible pairs of elements from <code>M</code>
 and elements from other types. Thus, the Haskell declaration is as follows<a href="#f4">[4]</a>:</p>
 
 <pre>
 data W m a = W m a
 </pre>
 
-<p>Note that to get the monad we need to fix the type <code>m</code> (kind of monads is <code>* -> *</code>). To inject
+<p>Note that to get the monad we need to fix the type <code>m</code> (the kind of monads is <code>* -> *</code>). To inject
 an arbitrary value into the monad (the Haskell <code>return</code> function) we use the neutral element (<code>mempty</code>)
 of the monoid.</p>
 
@@ -255,7 +257,7 @@ inject :: Monoid m => a -> W m a
 inject a = W mempty a
 </pre>
 
-<p>Think that no other element of <code>m</code> is possible to think: it is the only element we know of it!
+<p>Think about the element of <code>m</code>: there is only one element that it could be!
 Like any other monad, <code>W m</code> is also a <code>Functor</code>. We just apply the function to the value.</p>
 
 <pre>
@@ -273,7 +275,7 @@ join (W m (W m' a)) = W (mappend m m') a
 
 <p>In this function we use the other <code>Monoid</code> method to combine both values. It is important to
 note that in both monad operations <code>inject</code> and <code>join</code> we used <code>mempty</code> and <code>mappend</code>
-respectively. In practice, this is because they act equal. Indeed, they are equal if we forget the
+respectively. In practice, this is because they act similarly to each other. Indeed, they are equal if we forget the
 <code>a</code> value. Now, we are ready to define the <code>Monad</code> instance:</p>
 
 <pre>
@@ -282,10 +284,10 @@ instance Monoid m => Monad (W m) where
  w >>= f = join (fmap f w)
 </pre>
 
-<p>There is nothing to say about this instance. It is and standard definition valid to any monad.</p>
+<p>There is nothing to say about this instance. It is a standard definition, valid for any monad.</p>
 
-<p>What we have done here is to hide in a monad a monoid with all its operations. We have created a
-machine that operates monoid values. To insert a value into the machine we need the <code>tell</code>
+<p>What we have done here is to hide a monoid in a monad, with all its operations. We have created a
+machine that operates on monoidal values. To insert a value into the machine we need the <code>tell</code>
 function:</p>
 
 <pre>
@@ -293,7 +295,7 @@ tell :: m -> W m ()
 tell m = W m ()
 </pre>
 
-<p>When we execute the machine, it returns to us the result of operate all the values we have put on it.</p>
+<p>When we execute the machine, it returns the result of operating on all the values we have put into it.</p>
 
 <pre>
 execute :: W m a -> m
@@ -327,13 +329,13 @@ example = execute $ mapM_ tell [ 1 .. 4 ]
 <h2><a id="s3.2">3.2. The LaTeX Monad</a></h2>
 
 <p>Let&#39;s go back to the <code>LaTeX</code> type. Since <code>LaTeX</code> is an instance of <code>Monoid</code> we can construct
-its correspondent <code>Writer</code> monad.</p>
+its corresponding <code>Writer</code> monad.</p>
 
 <pre>
 type LaTeXW = W LaTeX
 </pre>
 
-<p>The <code>W</code> machine is waiting now for <code>LaTeX</code> values.</p>
+<p>The <code>W</code> machine is now waiting for <code>LaTeX</code> values.</p>
 
 <pre>
 example :: LaTeX
@@ -343,16 +345,16 @@ example = execute $ do
   tell $ title "LaTeX and the Writer Monad"
 </pre>
 
-<p>We put all that blocks in the machine, and it returns the concatenated block. We saved a lot of
-<code>mappend</code>&#39;s, but we now have a lot of <code>tell</code>&#39;s. No problem. Just redefine each function of
-blocks with <code>tell</code> and <code>execute</code>.</p>
+<p>We put all these blocks into the machine, and it returns the concatenated block for us. We just saved a lot of
+<code>mappend</code>&#39;s, but we now have a lot of <code>tell</code>&#39;s instead. No problem, just redefine each function of
+blocks using <code>tell</code> and <code>execute</code>.</p>
 
 <pre>
 author' :: LaTeXW a -> LaTeXW ()
 author' = tell . author . execute
 </pre>
 
-<p>If it is done in a similar way with <code>documentclass</code> and <code>title</code>, every <code>tell</code> in <code>example</code>
+<p>If this is done in a similar way to <code>documentclass</code> and <code>title</code>, every <code>tell</code> in <code>example</code>
 disappears.</p>
 
 <pre>
@@ -363,21 +365,21 @@ example = execute $ do
   title' "LaTeX and the Writer Monad"
 </pre>
 
-<p>And we can now use the <code>LaTeX</code> machine more comfortably. However, we have all functions duplicated.
-This is why the <code>LaTeXC</code> class exists. We are going to talk about it later.</p>
+<p>And we can now use the <code>LaTeX</code> machine more comfortably. However, we have duplicated all of our functions.
+This is why the <code>LaTeXC</code> class exists. We&#39;ll talk about this later.</p>
 
 <h2><a id="s3.3">3.3. Composing monads</a></h2>
 
 <p>To add flexibility to <i>HaTeX</i>, the writer monad explained above is defined as a monad transformer,
-named <code>LaTeXT</code>. The way to use it is the same, there are just a few changes.</p>
+named <code>LaTeXT</code>. The way we use it is the same, with just a few small changes.</p>
 
-<p>The first change is in type signatures. We need to carry an inner monad in every type.</p>
+<p>The first change is in the type signature. We need to carry an inner monad in every type.</p>
 
 <pre>
 foo :: Monad m => LaTeXT m a
 </pre>
 
-<p>However, in practice, we can avoid it. Say we going to use an specific monad <code>M</code>.</p>
+<p>However, in practice, we can avoid this by using type aliases. Say we&#39;re going to use a specific monad <code>M</code>.</p>
 
 <pre>
 type LaTeXW = LaTeXT M
@@ -385,11 +387,11 @@ type LaTeXW = LaTeXT M
 foo :: LaTeXW a
 </pre>
 
-<p>Now, type signatures remain unchanged.</p>
+<p>Now, the type signatures go back to the way they were.</p>
 
 <p>The other change is a new feature: the <code>lift</code> function. With it we can do any computation
-of our inner monad at any time. For example, suppose we want to output some code we have in
-the file <i>foo.hs</i>. Instead of copy all its content, or read and carry it as an argument along the code,
+on our inner monad at any time. For example, suppose we want to output some code we have in
+the file <i>foo.hs</i>. Instead of copying all of its content, or reading and carrying it as an argument along in the code,
 you can simply read that file using <code>lift</code> wherever you want.</p>
 
 <pre>
@@ -405,8 +407,8 @@ example = do
   "It was a funny exercise."
 </pre>
 
-<p>Different monads will give different features. In the case we are not interested in any of
-these features, it is enough to use the Identity monad.</p>
+<p>Different monads will each give different features. In the case where we&#39;re not interested in any of
+these features, we can simply use the Identity monad.</p>
 
 <pre>
 type LaTeXW = LaTeXT Identity
@@ -416,19 +418,20 @@ type LaTeXW = LaTeXT Identity
 <p><i>HaTeX</i> has two different interfaces. One uses blocks as <code>Monoid</code> elements and the other
 as <code>Monad</code> actions. If we want to keep both interfaces we have two choices: to duplicate
 function definitions<a href="#f5">[5]</a>
-or to have a typeclass which unifies both interfaces. Since duplicate definitions is a hard work
-and can arise problems<a href="#f6">[6]</a>, we took the second alternative and defined the <code>LaTeXC</code> typeclass. Both <code>LaTeX</code> and <code>LaTeXT m a</code> are
-instances of <code>LaTeXC</code> (the second one is a little tricky), so every function in <i>HaTeX</i> is defined using the
-typeclass. This way, we have both interfaces with a single import, without being worry about maintaining
-duplicated code. The cost is to have class constraints in type signatures. But these constraints are only required
-in the package. At the user level, you choose your interface and write type signatures in consequence.</p>
+or to have a typeclass which unifies both interfaces. Since having duplicate definitions is hard work
+and can raise many problems<a href="#f6">[6]</a>, we took the second alternative and defined the <code>LaTeXC</code> typeclass. Both <code>LaTeX</code> and <code>LaTeXT m a</code> are
+instances of <code>LaTeXC</code> (the second one is a little tricky), so every function in <i>HaTeX</i> is defined using this
+typeclass. This way, we can have both interfaces with a single import, without being worried about maintaining
+duplicated code. The cost for this is that we must have class constraints in our type signatures. However, these constraints are only
+required in the package. At the user level, you choose your interface and write type signatures correspondingly.
+</p>
 
 <h1><a id="s5">5. Packages</a></h1>
 
 <p><i>LaTeX</i>, in addition to its predefined commands, has a big number of packages
 that increase its power. <i>HaTeX</i> functions for some of these packages are defined
-in separated modules, with one or more modules per package. This way, you can import only those
-functions you actually need. Some of these modules are below explained.</p>
+in separate modules, with one or more modules per package. This way you can import only the
+functions you actually need. Some of these modules are explained below.</p>
 
 <h2><a id="s5.1">5.1. Inputenc</a></h2>
 
@@ -448,19 +451,19 @@ thePreamble =
  <> title "Issues with non-ASCII characters"
 </pre>
 
-<p>Don&#39;t forget to set to UTF-8 encoding your Haskell source too.</p>
+<p>Don&#39;t forget to set to UTF-8 encoding in your Haskell source too.</p>
 
 <h2><a id="s5.2">5.2. Graphicx</a></h2>
 
-<p>With the <code>Graphicx</code> package you can insert images in your document and do some
-other transformations. In order to insert an image use the <code>includegraphics</code>
+<p>With the <code>Graphicx</code> package, you can insert images in your document and do some
+other transformations to them. In order to insert an image, use the <code>includegraphics</code>
 function.</p>
 
 <pre>
 includegraphics :: LaTeXC l => [IGOption] -> FilePath -> l
 </pre>
 
-<p>The list of <code>IGOption</code>&#39;s allows you to set some properties of the image, like width,
+<p>The list of <code>IGOption</code>&#39;s allows you to set some properties of the image like width,
 height, scaling or rotation. See the API documentation for details.
 </p>
 
@@ -468,23 +471,24 @@ height, scaling or rotation. See the API documentation for details.
 
 <h2><a id="s6.1">6.1. Notes about this guide</a></h2>
 
-<p><b>This guide is not static</b>. It will certainly be changed with the time.
-Any reader can participate as a writer since the guide is itself open source (and
-written in Haskell!). The source repository can be reached at:
-<a href="https://github.com/Daniel-Diaz/hatex-guide">https://github.com/Daniel-Diaz/hatex-guide</a>. Read more detailed instructions in the
+<p><b>This guide is not static</b>. It will certainly be changed as time passes.
+Any reader can also help participate in its writing, since the guide is itself open source (and
+written in Haskell!). The source repository can be found at:
+<a href="https://github.com/Daniel-Diaz/hatex-guide">https://github.com/Daniel-Diaz/hatex-guide</a>. You can read more detailed instructions in the
 README file.</p>
 
-<p>If you think there is something unclear, something hard to understand, please, report it.</p>
+<p>If you think something is unclear, or hard to understand, please do take the time to report it.
+We really appreciate it.</p>
 
 <h2><a id="s6.2">6.2. Notes from the author</a></h2>
 
-<p>I would like to end this guide saying thanks to all the people that has been interested
-in <i>HaTeX</i> somehow, especially to those who contributed to it with patches, opinions
-or bug reports. <b>Thanks</b>.
+<p>I would like to end this guide by saying thanks to all the people that have been interested
+in <i>HaTeX</i> in any way, especially to those who contributed to it with patches, opinions
+and\/or bug reports. <b>Thanks</b>.
 </p>
 
 <hr><a id="footnotes"><h1>Footnotes</h1></a><p><a id="f1">[1]</a> - 
-With <i>well-formed</i> we mean that all braces, environments, math expressions, ... are closed.
+By <i>well-formed</i> we mean all braces, environments, math expressions, ... are closed.
 </p><p><a id="f2">[2]</a> - 
 Please, note that the <code>LaTeX</code> block is <b>not</b> the same that the <i>LaTeX</i> expression. The former
 is a Haskell value, not the <i>LaTeX</i> code itself.
@@ -496,5 +500,5 @@ Some authors write it using tuples, like this: <code>data W m a = W (a,m)</code>
 This was the approach taken in <i>HaTeX</i> 3 until the version 3.3, where the <code>LaTeXC</code> class was included.
 </p><p><a id="f6">[6]</a> - 
 In fact, we had a problem with <i>HaTeX</i>-meta, the program that automatically generated the duplicated functions.
-The problem was described in a blog post: <a href="http://deltadiaz.blogspot.com.es/2012/04/hatex-trees-and-problems.html">http://deltadiaz.blogspot.com.es/2012/04/hatex-trees-and-problems.html</a>.
+The problem was described in the following blog post: <a href="http://deltadiaz.blogspot.com.es/2012/04/hatex-trees-and-problems.html">http://deltadiaz.blogspot.com.es/2012/04/hatex-trees-and-problems.html</a>.
 </p></body></html>
